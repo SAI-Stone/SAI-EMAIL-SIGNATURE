@@ -7,34 +7,61 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
+            margin: 20px; /* Reduced margin for a cleaner look */
+            background-color: #f4f4f4; /* Light grey background */
+            color: #333; /* Darker text for better readability */
         }
         h1 {
             text-align: center;
+            color: #007bff; /* Primary blue color */
+            margin-bottom: 30px; /* More space below the title */
         }
         .file-list {
             list-style-type: none;
             padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
+            display: grid; /* Using grid layout for better responsiveness */
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive columns */
+            gap: 20px; /* Spacing between items */
         }
         .file-list li {
-            margin: 10px;
             text-align: center;
+            background-color: #fff; /* White background for each item */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            padding: 15px;
         }
         .file-list img {
-            width: 100px;
-            height: 100px;
+            width: 100%; /* Make images responsive within their container */
+            max-width: 100px;
+            height: auto; /* Maintain aspect ratio */
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 6px;
             margin-bottom: 10px;
+            display: block; /* Prevent extra space below inline images */
+            margin-left: auto;
+            margin-right: auto;
         }
         .file-list a {
             text-decoration: none;
             color: #007bff;
             font-weight: bold;
+            display: block; /* Make the entire block clickable */
+        }
+        .file-list a:hover {
+            color: #0056b3; /* Darker blue on hover */
+        }
+        .file-list br {
+            display: none; /* Remove the <br> tag, as the link is a block element */
+        }
+        /* Improved styling for better visual hierarchy */
+        h1 {
+            font-size: 2.5em;
+        }
+        .file-list li {
+            transition: transform 0.2s ease-in-out; /* Add a subtle hover effect */
+        }
+        .file-list li:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -44,62 +71,73 @@
         <li>
             <a href="7%20-%20Signature/img_icons.jpg" target="_blank">
                 <img src="7%20-%20Signature/img_icons.jpg" alt="img_icons">
-                <br>img_icons.jpg
+                img_icons.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/img_promotion.jpg" target="_blank">
                 <img src="7%20-%20Signature/img_promotion.jpg" alt="img_promotion">
-                <br>img_promotion.jpg
+                img_promotion.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/Urblo.gif" target="_blank">
                 <img src="7%20-%20Signature/Urblo.gif" alt="Urblo">
-                <br>Urblo.gif
+                Urblo.gif
             </a>
         </li>
-        <!-- Listing images in the "0 - name" subfolder -->
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Cameron.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Cameron.jpg" alt="Cameron">
-                <br>Cameron.jpg
+                Cameron.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Hunter.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Hunter.jpg" alt="Hunter">
-                <br>Hunter.jpg
+                Hunter.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Jessie.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Jessie.jpg" alt="Jessie">
-                <br>Jessie.jpg
+                Jessie.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Maleena.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Maleena.jpg" alt="Maleena">
-                <br>Maleena.jpg
+                Maleena.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Melinda.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Melinda.jpg" alt="Melinda">
-                <br>Melinda.jpg
+                Melinda.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Natalie.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Natalie.jpg" alt="Natalie">
-                <br>Natalie.jpg
+                Natalie.jpg
             </a>
         </li>
         <li>
             <a href="7%20-%20Signature/0%20-%20name/Yezi.jpg" target="_blank">
                 <img src="7%20-%20Signature/0%20-%20name/Yezi.jpg" alt="Yezi">
-                <br>Yezi.jpg
+                Yezi.jpg
+            </a>
+        </li>
+        <li>
+            <a href="7%20-%20Signature/20th%20anniversary%20email%20signature.png" target="_blank">
+                <img src="7%20-%20Signature/20th%20anniversary%20email%20signature.png" alt="20th anniversary email signature">
+                20th anniversary email signature.png
+            </a>
+        </li>
+        <li>
+            <a href="7%20-%20Signature/water%20jet%20email%20signature.png" target="_blank">
+                <img src="7%20-%20Signature/water%20jet%20email%20signature.png" alt="water jet email signature">
+                water jet email signature.png
             </a>
         </li>
     </ul>
