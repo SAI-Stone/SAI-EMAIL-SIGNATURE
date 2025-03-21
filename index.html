@@ -279,32 +279,45 @@
         </table>
     </template>
 
-    <script>
-        const personLinks = document.querySelectorAll('.left-panel ul li a');
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        const signaturePreview = document.getElementById('signature-preview');
-        const signatureHTML = document.getElementById('signature-html');
-        const signatureTemplate = document.getElementById('signature-template').innerHTML;
+   <script>
+    const personLinks = document.querySelectorAll('.left-panel ul li a');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const signaturePreview = document.getElementById('signature-preview');
+    const signatureHTML = document.getElementById('signature-html');
+    const signatureTemplate = document.getElementById('signature-template').innerHTML;
 
-        personLinks.forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                const personName = this.dataset.name;
-                const imageName = personName + '.jpg';
-                const emailAddress = personName.toLowerCase() + '@saistone.com.au';
-                const imageSrc = `https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/0%20-%20name/${imageName}`;
+    const personalPhoneNumbers = {
+        'Hunter': 'M: 0481 527 999',
+        'Cameron': 'M: 0433 344 457',
+        'Maleena': 'M: 0452 133 968',
+        'Bob': 'M: 0422 124 969'
+    };
 
-                nameInput.value = personName;
-                emailInput.value = emailAddress;
+    personLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            const personName = this.dataset.name;
+            const imageName = personName + '.jpg';
+            const emailAddress = personName.toLowerCase() + '@saistone.com.au';
+            const imageSrc = `https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/0%20-%20name/${imageName}`;
 
-                let generatedHTML = signatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
-                generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+            nameInput.value = personName;
+            emailInput.value = emailAddress;
 
-                signatureHTML.value = generatedHTML;
-                signaturePreview.innerHTML = generatedHTML;
-            });
+            let generatedHTML = signatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
+            generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+
+            // Add personal phone number for specific individuals
+            if (personalPhoneNumbers.hasOwnProperty(personName)) {
+                const phoneNumberLine = `<br>${personalPhoneNumbers[personName]}`;
+                generatedHTML = generatedHTML.replace('P : 1300 855 851', `P : 1300 855 851${phoneNumberLine}`);
+            }
+
+            signatureHTML.value = generatedHTML;
+            signaturePreview.innerHTML = generatedHTML;
         });
-    </script>
+    });
+</script>
 </body>
 </html>
