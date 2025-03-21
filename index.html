@@ -234,7 +234,7 @@
         </ul>
     </div>
 
-    <template id="signature-template">
+    <template id="signature-template-default">
         <div><br></div><div>Best Regards,</div><table style="width: 640px; border-collapse: collapse;" cellspacing="0" cellpadding="0">
         <tbody>
         <tr>
@@ -279,47 +279,95 @@
         </table>
     </template>
 
-   <script>
-    const personLinks = document.querySelectorAll('.left-panel ul li a');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const signaturePreview = document.getElementById('signature-preview');
-    const signatureHTML = document.getElementById('signature-html');
-    const signatureTemplate = document.getElementById('signature-template').innerHTML;
+    <template id="signature-template-mobile">
+        <div><br></div><div>Best Regards,</div><table style="width: 640px; border-collapse: collapse;" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td class="fa-edmvaw" style="width: 143px; vertical-align: bottom;"><br></td><td style="vertical-align: bottom; width: 497px;"></td></tr></tbody></table><div>
 
-    const personalPhoneNumbers = {
-        'Hunter': 'M: 0481 527 999',
-        'Cameron': 'M: 0433 344 457',
-        'Maleena': 'M: 0452 133 968',
-        'Bob': 'M: 0422 124 969'
-    };
+        <a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"></a></div><table border="0" width="640" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td rowspan="2" valign="bottom" width="150"><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> </a></td></tr></tbody></table><div>
 
-    personLinks.forEach(link => {
-        link.addEventListener('click', function(event) {
-            event.preventDefault();
-            const personName = this.dataset.name;
-            const imageName = personName + '.jpg';
-            const emailAddress = personName.toLowerCase() + '@saistone.com.au';
-            const imageSrc = `https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/0%20-%20name/${imageName}`;
+        <a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> </a></div><table border="0" width="640" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td rowspan="2" valign="bottom" width="150"><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> <img style="width: 184px; height: 251.366px;" src="[IMAGE_SRC]" alt="SAI STONE" width="150" border="0"> </a></td>
 
-            nameInput.value = personName;
-            emailInput.value = emailAddress;
+        <td valign="bottom" height="150">
+        <table style="height: 110px; width: 100%;" border="0" width="100%" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr style="height: 20px;">
+        <td style="height: 20px;" colspan="2" height="20">&nbsp;</td>
+        </tr>
+        <tr style="height: 90px;">
+        <td style="height: 90px;" valign="bottom" width="60%"> <span style="font-size: 14px;">P : 1300 855 851<br>M:&nbsp;[MOBILE_NUMBER]<br>E : <a rel="noopener noreferrer" href="mailto:[EMAIL]" target="_blank">[EMAIL]</a><br><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank">www.saistone.com.au</a><br>Instagram: <a rel="noopener noreferrer" href="https://www.instagram.com/saistone_/" target="_blank">saistone_</a><br>5 Hamilton St, Oakleigh, VIC 3166<br></span> </td>
 
-            let generatedHTML = signatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
-            generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+        <td style="height: 90px;" valign="bottom" width="40%"><a rel="noopener noreferrer" href="https://saistone.com.au/services/" target="_blank"> <img style="width: 249px; height: 143.153px;" src="https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/water%20jet%20email%20signature.png" alt="Our new Local Water Jet Cutting Service" width="80" border="0"> </a></td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
 
-            // Add personal phone number for specific individuals and remove trailing newline
-            if (personalPhoneNumbers.hasOwnProperty(personName)) {
-                const phoneNumberLine = `<br>${personalPhoneNumbers[personName]}`;
-                generatedHTML = generatedHTML.replace('P : 1300 855 851', `P : 1300 855 851${phoneNumberLine}`);
-                // Remove trailing newline characters
-                generatedHTML = generatedHTML.trimEnd();
-            }
+        <tr>
+        <td valign="top"><a rel="noopener noreferrer" href="https://saistoneportal.com.au/" target="_blank"> <img src="https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/20th%20anniversary%20email%20signature.png" alt="Celebrating 20 Years of Excellence!" width="493" border="0" style="width: 495px; height: 114.14px;"> </a></td>
+        </tr>
+        </tbody>
+        </table><div><a rel="noopener noreferrer" href="https://saistoneportal.com.au/" target="_blank"> </a>
 
-            signatureHTML.value = generatedHTML;
-            signaturePreview.innerHTML = generatedHTML;
+        </div><table border="0" width="640" cellspacing="0" cellpadding="0"><tbody><tr><td style="vertical-align: bottom; width: 497px;">
+        </td>
+        </tr>
+        </tbody>
+        </table>
+    </template>
+
+    <script>
+        const personLinks = document.querySelectorAll('.left-panel ul li a');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const signaturePreview = document.getElementById('signature-preview');
+        const signatureHTML = document.getElementById('signature-html');
+        const defaultSignatureTemplate = document.getElementById('signature-template-default').innerHTML;
+        const mobileSignatureTemplate = document.getElementById('signature-template-mobile').innerHTML;
+
+        const personalPhoneNumbers = {
+            'Hunter': '0481 527 999',
+            'Cameron': '0433 344 457',
+            'Maleena': '0452 133 968',
+            'Bob': '0422 124 969'
+        };
+
+        const peopleWithMobile = ['Hunter', 'Cameron', 'Maleena', 'Bob'];
+
+        personLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const personName = this.dataset.name;
+                const imageName = personName + '.jpg';
+                const emailAddress = personName.toLowerCase() + '@saistone.com.au';
+                const imageSrc = `https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/0%20-%20name/${imageName}`;
+
+                nameInput.value = personName;
+                emailInput.value = emailAddress;
+
+                let generatedHTML = '';
+
+                if (peopleWithMobile.includes(personName)) {
+                    generatedHTML = mobileSignatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
+                    generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+                    generatedHTML = generatedHTML.replace(/\[MOBILE_NUMBER\]/g, personalPhoneNumbers[personName]);
+                } else {
+                    generatedHTML = defaultSignatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
+                    generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+                }
+
+                signatureHTML.value = generatedHTML;
+                signaturePreview.innerHTML = generatedHTML;
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
