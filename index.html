@@ -7,139 +7,304 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px; /* Reduced margin for a cleaner look */
-            background-color: #f4f4f4; /* Light grey background */
-            color: #333; /* Darker text for better readability */
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex; /* Enable flexbox for layout */
+            min-height: 100vh; /* Ensure full viewport height */
         }
+
         h1 {
             text-align: center;
-            color: #007bff; /* Primary blue color */
-            margin-bottom: 30px; /* More space below the title */
+            color: #007bff;
+            margin-bottom: 30px;
         }
-        .file-list {
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%; /* Take full width initially */
+        }
+
+        .main-content {
+            display: flex;
+            width: 90%; /* Adjust width as needed */
+            max-width: 1200px; /* Maximum width of the content area */
+            margin-top: 20px;
+        }
+
+        .left-panel {
+            width: 250px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+
+        .left-panel h2 {
+            margin-top: 0;
+            color: #007bff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .left-panel ul {
             list-style-type: none;
             padding: 0;
-            display: grid; /* Using grid layout for better responsiveness */
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Responsive columns */
-            gap: 20px; /* Spacing between items */
         }
-        .file-list li {
-            text-align: center;
-            background-color: #fff; /* White background for each item */
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            padding: 15px;
-        }
-        .file-list img {
-            width: 100%; /* Make images responsive within their container */
-            max-width: 100px;
-            height: auto; /* Maintain aspect ratio */
-            object-fit: cover;
-            border-radius: 6px;
+
+        .left-panel ul li {
             margin-bottom: 10px;
-            display: block; /* Prevent extra space below inline images */
-            margin-left: auto;
-            margin-right: auto;
         }
-        .file-list a {
+
+        .left-panel ul li a {
+            display: block;
+            padding: 10px;
             text-decoration: none;
+            color: #333;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+
+        .left-panel ul li a:hover {
+            background-color: #e9ecef;
             color: #007bff;
+        }
+
+        .right-panel {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-panel h2 {
+            margin-top: 0;
+            color: #007bff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #signature-preview {
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        #signature-html {
+            width: 100%;
+            min-height: 150px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .other-files-list {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .other-files-list li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .other-files-list li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        .other-files-list li a:hover {
+            color: #007bff;
+        }
+
+        .signature-controls label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
-            display: block; /* Make the entire block clickable */
         }
-        .file-list a:hover {
-            color: #0056b3; /* Darker blue on hover */
+
+        .signature-controls input[type="text"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
-        .file-list br {
-            display: none; /* Remove the <br> tag, as the link is a block element */
+
+        .signature-controls button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
-        /* Improved styling for better visual hierarchy */
-        h1 {
-            font-size: 2.5em;
-        }
-        .file-list li {
-            transition: transform 0.2s ease-in-out; /* Add a subtle hover effect */
-        }
-        .file-list li:hover {
-            transform: scale(1.05);
+
+        .signature-controls button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Email Signatures</h1>
-    <ul class="file-list">
-        <li>
-            <a href="7%20-%20Signature/img_icons.jpg" target="_blank">
-                <img src="7%20-%20Signature/img_icons.jpg" alt="img_icons">
-                img_icons.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/img_promotion.jpg" target="_blank">
-                <img src="7%20-%20Signature/img_promotion.jpg" alt="img_promotion">
-                img_promotion.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/Urblo.gif" target="_blank">
-                <img src="7%20-%20Signature/Urblo.gif" alt="Urblo">
-                Urblo.gif
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Cameron.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Cameron.jpg" alt="Cameron">
-                Cameron.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Hunter.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Hunter.jpg" alt="Hunter">
-                Hunter.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Jessie.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Jessie.jpg" alt="Jessie">
-                Jessie.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Maleena.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Maleena.jpg" alt="Maleena">
-                Maleena.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Melinda.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Melinda.jpg" alt="Melinda">
-                Melinda.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Natalie.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Natalie.jpg" alt="Natalie">
-                Natalie.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/0%20-%20name/Yezi.jpg" target="_blank">
-                <img src="7%20-%20Signature/0%20-%20name/Yezi.jpg" alt="Yezi">
-                Yezi.jpg
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/20th%20anniversary%20email%20signature.png" target="_blank">
-                <img src="7%20-%20Signature/20th%20anniversary%20email%20signature.png" alt="20th anniversary email signature">
-                20th anniversary email signature.png
-            </a>
-        </li>
-        <li>
-            <a href="7%20-%20Signature/water%20jet%20email%20signature.png" target="_blank">
-                <img src="7%20-%20Signature/water%20jet%20email%20signature.png" alt="water jet email signature">
-                water jet email signature.png
-            </a>
-        </li>
-    </ul>
+    <div class="container">
+        <h1>Email Signatures</h1>
+        <div class="main-content">
+            <div class="left-panel">
+                <h2>People</h2>
+                <ul>
+                    <li><a href="#" data-name="Bob">Bob</a></li>
+                    <li><a href="#" data-name="Cameron">Cameron</a></li>
+                    <li><a href="#" data-name="Hunter">Hunter</a></li>
+                    <li><a href="#" data-name="Jessie">Jessie</a></li>
+                    <li><a href="#" data-name="Maleena">Maleena</a></li>
+                    <li><a href="#" data-name="Melinda">Melinda</a></li>
+                    <li><a href="#" data-name="Natalie">Natalie</a></li>
+                    <li><a href="#" data-name="Yezi">Yezi</a></li>
+                </ul>
+            </div>
+            <div class="right-panel">
+                <h2>Generate Email Signature</h2>
+                <div class="signature-controls">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" disabled>
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" disabled>
+                </div>
+                <h3>Signature Preview</h3>
+                <div id="signature-preview">
+                    </div>
+                <h3>Signature HTML Code</h3>
+                <textarea id="signature-html" readonly></textarea>
+            </div>
+        </div>
+
+        <h2 style="text-align: center; margin-top: 30px;">Other Files</h2>
+        <ul class="other-files-list">
+            <li>
+                <a href="7%20-%20Signature/img_icons.jpg" target="_blank">
+                    <img src="7%20-%20Signature/img_icons.jpg" alt="img_icons" style="max-width: 100px; display: block; margin: 0 auto; margin-bottom: 5px;">
+                    img_icons.jpg
+                </a>
+            </li>
+            <li>
+                <a href="7%20-%20Signature/img_promotion.jpg" target="_blank">
+                    <img src="7%20-%20Signature/img_promotion.jpg" alt="img_promotion" style="max-width: 100px; display: block; margin: 0 auto; margin-bottom: 5px;">
+                    img_promotion.jpg
+                </a>
+            </li>
+            <li>
+                <a href="7%20-%20Signature/Urblo.gif" target="_blank">
+                    <img src="7%20-%20Signature/Urblo.gif" alt="Urblo" style="max-width: 100px; display: block; margin: 0 auto; margin-bottom: 5px;">
+                    Urblo.gif
+                </a>
+            </li>
+            <li>
+                <a href="7%20-%20Signature/20th%20anniversary%20email%20signature.png" target="_blank">
+                    <img src="7%20-%20Signature/20th%20anniversary%20email%20signature.png" alt="20th anniversary email signature" style="max-width: 100px; display: block; margin: 0 auto; margin-bottom: 5px;">
+                    20th anniversary email signature.png
+                </a>
+            </li>
+            <li>
+                <a href="7%20-%20Signature/water%20jet%20email%20signature.png" target="_blank">
+                    <img src="7%20-%20Signature/water%20jet%20email%20signature.png" alt="water jet email signature" style="max-width: 100px; display: block; margin: 0 auto; margin-bottom: 5px;">
+                    water jet email signature.png
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <template id="signature-template">
+        <div><br></div><div>Best Regards,</div><table style="width: 640px; border-collapse: collapse;" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td class="fa-edmvaw" style="width: 143px; vertical-align: bottom;"><br></td><td style="vertical-align: bottom; width: 497px;"></td></tr></tbody></table><div>
+
+        <a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"></a></div><table border="0" width="640" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td rowspan="2" valign="bottom" width="150"><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> </a></td></tr></tbody></table><div>
+
+        <a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> </a></div><table border="0" width="640" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr>
+        <td rowspan="2" valign="bottom" width="150"><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank"> <img style="width: 184px; height: 251.366px;" src="[IMAGE_SRC]" alt="SAI STONE" width="150" border="0"> </a></td>
+
+        <td valign="bottom" height="150">
+        <table style="height: 110px; width: 100%;" border="0" width="100%" cellspacing="0" cellpadding="0">
+        <tbody>
+        <tr style="height: 20px;">
+        <td style="height: 20px;" colspan="2" height="20">&nbsp;</td>
+        </tr>
+        <tr style="height: 90px;">
+        <td style="height: 90px;" valign="bottom" width="60%"> <span style="font-size: 14px;">P : 1300 855 851<br>E : <a rel="noopener noreferrer" href="mailto:[EMAIL]" target="_blank">[EMAIL]</a><br><a rel="noopener noreferrer" href="https://www.saistone.com.au/" target="_blank">www.saistone.com.au</a><br>Instagram: <a rel="noopener noreferrer" href="https://www.instagram.com/saistone_/" target="_blank">saistone_</a><br>5 Hamilton St, Oakleigh, VIC 3166<br><br></span> </td>
+
+        <td style="height: 90px;" valign="bottom" width="40%"><a rel="noopener noreferrer" href="https://saistone.com.au/services/" target="_blank"> <img style="width: 249px; height: 143.153px;" src="https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/water%20jet%20email%20signature.png" alt="Our new Local Water Jet Cutting Service" width="80" border="0"> </a></td>
+        </tr>
+        </tbody>
+        </table>
+        </td>
+        </tr>
+
+        <tr>
+        <td valign="top"><a rel="noopener noreferrer" href="https://saistoneportal.com.au/" target="_blank"> <img src="https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/20th%20anniversary%20email%20signature.png" alt="Celebrating 20 Years of Excellence!" width="493" border="0" style="width: 495px; height: 114.14px;"> </a></td>
+        </tr>
+        </tbody>
+        </table><div><a rel="noopener noreferrer" href="https://saistoneportal.com.au/" target="_blank"> </a>
+
+        </div><table border="0" width="640" cellspacing="0" cellpadding="0"><tbody><tr><td style="vertical-align: bottom; width: 497px;">
+        </td>
+        </tr>
+        </tbody>
+        </table>
+    </template>
+
+    <script>
+        const personLinks = document.querySelectorAll('.left-panel ul li a');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const signaturePreview = document.getElementById('signature-preview');
+        const signatureHTML = document.getElementById('signature-html');
+        const signatureTemplate = document.getElementById('signature-template').innerHTML;
+
+        personLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                const personName = this.dataset.name;
+                const imageName = personName + '.jpg';
+                const emailAddress = personName.toLowerCase() + '@saistone.com.au';
+                const imageSrc = `https://sai-stone.github.io/SAI-EMAIL-SIGNATURE/7%20-%20Signature/0%20-%20name/${imageName}`;
+
+                nameInput.value = personName;
+                emailInput.value = emailAddress;
+
+                let generatedHTML = signatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
+                generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
+
+                signatureHTML.value = generatedHTML;
+                signaturePreview.innerHTML = generatedHTML;
+            });
+        });
+    </script>
 </body>
 </html>
