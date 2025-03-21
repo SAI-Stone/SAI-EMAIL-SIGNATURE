@@ -308,10 +308,12 @@
             let generatedHTML = signatureTemplate.replace(/\[IMAGE_SRC\]/g, imageSrc);
             generatedHTML = generatedHTML.replace(/\[EMAIL\]/g, emailAddress);
 
-            // Add personal phone number for specific individuals
+            // Add personal phone number for specific individuals and remove trailing newline
             if (personalPhoneNumbers.hasOwnProperty(personName)) {
                 const phoneNumberLine = `<br>${personalPhoneNumbers[personName]}`;
                 generatedHTML = generatedHTML.replace('P : 1300 855 851', `P : 1300 855 851${phoneNumberLine}`);
+                // Remove trailing newline characters
+                generatedHTML = generatedHTML.trimEnd();
             }
 
             signatureHTML.value = generatedHTML;
