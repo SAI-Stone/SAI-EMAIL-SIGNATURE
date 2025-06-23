@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAI Stone Tools</title>
+<style>
+/* Reset & base styles */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f4f4;color:#333;min-height:100vh;display:flex;flex-direction:column}
+h1,h2{color:#007bff;text-align:center;margin:20px 0}
+.hidden{display:none}
+nav{background:#fff;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+nav .brand{font-size:1.2rem;font-weight:bold;color:#007bff}
+section{padding:20px;width:100%;flex:1;display:flex;flex-direction:column;align-items:center}
+.card-container{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-top:40px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);padding:40px 60px;cursor:pointer;transition:transform .2s;font-size:1.1rem;text-align:center}
+.card:hover{transform:translateY(-4px)}
+iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+form{background:#fff;width:100%;max-width:600px;padding:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+form label{display:block;margin-top:15px;font-weight:bold}
+form input[type="text"],form input[type="number"],form select{width:100%;padding:8px;margin-top:5px;border-radius:4px;border:1px solid #ccc}
+button.primary{margin-top:20px;background:#007bff;color:#fff;border:none;padding:10px 16px;border-radius:5px;cursor:pointer;transition:background .2s}
+button.primary:hover{background:#0056b3}
+details{margin-top:20px;border:1px solid #ccc;border-radius:8px;padding:10px;background:#fafafa}
+.output{margin-top:20px;background:#fff;width:100%;max-width:600px;padding:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);font-size:1rem}
+.output span{display:block;margin-bottom:6px}
+.back-btn{margin-top:20px;background:#6c757d}
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand">SAI Stone Tools</div>
+</nav>
+
+<!-- Home Section -->
+<section id="home-section">
+  <h1>Choose Your Tool</h1>
+  <div class="card-container">
+    <div class="card" id="open-signature">✉️ Email Signature Generator</div>
+    <div class="card" id="open-waterjet">💧 Water Jet Pricing Calculator</div>
+  </div>
+</section>
+
+<!-- Email Signature Section -->
+<section id="signature-section" class="hidden">
+  <h2>Email Signature Generator</h2>
+  <!-- Change the src to the filename of your existing signature generator -->
+  <iframe src="email_signature.html" title="Email Signature Generator"></iframe>
+  <button class="primary back-btn" id="back-from-signature">⬅ Back to Home</button>
+</section>
+
+<!-- Water Jet Pricing Section -->
+<section id="waterjet-section" class="hidden">
+  <h2>Water Jet Pricing Calculator</h2>
+
+  <form id="waterjet-form">
+    <label for="inscription">Inscription / Text (letter count auto-calculates)</label>
+    <input type="text" id="inscription" placeholder="Enter the text to be cut">
+
+    <label for="dimension-select">Dimensions (mm)</label>
+    <select id="dimension-select">
+      <option value="" disabled selected>Choose size</option>
+      <option value="800x400">800 × 400</option>
+      <option value="600x400">600 × 400</option>
+      <option value="custom">Custom…</option>
+    </select>
+
+    <div id="custom-dimensions" class="hidden">
+      <label for="custom-length">Length (mm)</label>
+      <input type="number" id="custom-length" min="1" placeholder="e.g. 750">
+      <label for="custom-width">Width (mm)</label>
+      <input type="number" id="custom-width" min="1" placeholder="e.g. 350">
+    </div>
+
+    <label for="thickness-select">Thickness (mm)</label>
+    <select id="thickness-select">
+      <option value="20" selected>20</option>
+      <option value="30">30</option>
+    </select>
+
+    <label for="inlay-checkbox"><input type="checkbox" id="inlay-checkbox"> Inlay Required</label>
+
+    <details>
+      <summary>Admin Settings (adjust anytime)</summary>
+      <label for="admin-base-price">Base Price ($)</label>
+      <input type="number" id="admin-base-price" value="300">
+      <label for="admin-base-length">Base Length (mm)</label>
+      <input type="number" id="admin-base-length" value="600">
+      <label for="admin-base-width">Base Width (mm)</label>
+      <input type="number" id="admin-base-width" value="400">
+      <label for="admin-base-thickness">Base Thickness (mm)</label>
+      <input type="number" id="admin-base-thickness" value="20">
+      <label for="admin-inlay-price">Inlay Price per Letter ($)</label>
+      <input type="number" id="admin-inlay-price" value="20">
+    </details>
+
+    <button type="submit" class="primary">Calculate Price</button>
+  </form>
+
+  <div id="output" class="output hidden"></div>
+
+  <button class="primary back-btn" id="back-from-waterjet">⬅ Back to Home</button>
+</section>
+
+<script>
+(function(){
+  /* ---- Navigation ----- */
+  const homeSection = document.getElementById('home-section');
+  const signatureSection = document.getElementById('signature-section');
+  const waterjetSection = document.getElementById('waterjet-section');
+  document.getElementById('open-signature').addEventListener('click',() => {
+    homeSection.classList.add('hidden');
+    signatureSection.classList.remove('hidden');
+  });
+  document.getElementById('open-waterjet').addEventListener('click',() => {
+    homeSection.classList.add('hidden');
+    waterjetSection.classList.remove('hidden');
+  });
+  document.getElementById('back-from-signature').addEventListener('click',() => {
+    signatureSection.classList.add('hidden');
+    homeSection.classList.remove('hidden');
+  });
+  document.getElementById('back-from-waterjet').addEventListener('click',() => {
+    waterjetSection.classList.add('hidden');
+    homeSection.classList.remove('hidden');
+  });
+
+  /* ---- Waterjet Calculator ---- */
+  const inscriptionInput = document.getElementById('inscription');
+  const dimensionSelect = document.getElementById('dimension-select');
+  const customDimsDiv = document.getElementById('custom-dimensions');
+  const customLengthInput = document.getElementById('custom-length');
+  const customWidthInput = document.getElementById('custom-width');
+  const thicknessSelect = document.getElementById('thickness-select');
+  const inlayCheckbox = document.getElementById('inlay-checkbox');
+
+  const form = document.getElementById('waterjet-form');
+  const outputDiv = document.getElementById('output');
+
+  /* Admin inputs */
+  const adminBasePrice = document.getElementById('admin-base-price');
+  const adminBaseLength = document.getElementById('admin-base-length');
+  const adminBaseWidth = document.getElementById('admin-base-width');
+  const adminBaseThickness = document.getElementById('admin-base-thickness');
+  const adminInlayPrice = document.getElementById('admin-inlay-price');
+
+  /* Show/hide custom dimensions inputs */
+  dimensionSelect.addEventListener('change',() => {
+    customDimsDiv.classList.toggle('hidden', dimensionSelect.value !== 'custom');
+  });
+
+  /* Automatically update letter count */
+  let letterCount = 0;
+  inscriptionInput.addEventListener('input', () => {
+    letterCount = inscriptionInput.value.replace(/\s+/g,'').length;
+  });
+
+  /* Form submission */
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    /* Fetch admin parameters */
+    const basePrice = parseFloat(adminBasePrice.value) || 0;
+    const baseLength = parseFloat(adminBaseLength.value) || 1;
+    const baseWidth = parseFloat(adminBaseWidth.value) || 1;
+    const baseThickness = parseFloat(adminBaseThickness.value) || 1;
+    const inlayPricePerLetter = parseFloat(adminInlayPrice.value) || 0;
+    const baseArea = baseLength * baseWidth;
+
+    /* Get inscription & letter count */
+    const text = inscriptionInput.value.trim();
+    const letters = text.replace(/\s+/g,'').length;
+    letterCount = letters;
+
+    /* Get dimensions */
+    let length, width;
+    if(dimensionSelect.value === 'custom'){
+      length = parseFloat(customLengthInput.value) || 0;
+      width  = parseFloat(customWidthInput.value)  || 0;
+    }else if(dimensionSelect.value){
+      [length,width] = dimensionSelect.value.split('x').map(n => parseFloat(n));
+    }else{
+      alert('Please select dimensions'); return;
+    }
+
+    /* Get thickness */
+    const thickness = parseFloat(thicknessSelect.value);
+
+    /* Flags */
+    const inlayRequired = inlayCheckbox.checked;
+
+    /* ---- Calculations ---- */
+    const areaFactor = (length * width) / baseArea;
+    const thicknessFactor = (thickness === baseThickness) ? 1 : thickness / baseThickness;
+    const inlayPrice = inlayRequired ? inlayPricePerLetter * letterCount : 0;
+    const finalPrice = (basePrice * areaFactor * thicknessFactor) + inlayPrice;
+
+    /* ---- Output ---- */
+    outputDiv.innerHTML =
+      '<span><strong>Letter Count:</strong> ' + letterCount + '</span>' +
+      '<span><strong>Area Factor:</strong> ' + areaFactor.toFixed(3) + '</span>' +
+      '<span><strong>Thickness Factor:</strong> ' + thicknessFactor.toFixed(2) + '</span>' +
+      '<span><strong>Inlay Price:</strong> $' + inlayPrice.toFixed(2) + '</span>' +
+      '<span><strong>Final Price:</strong> <em>$' + finalPrice.toFixed(2) + '</em></span>';
+    outputDiv.classList.remove('hidden');
+  });
+})();
+</script>
+</body>
+</html>
