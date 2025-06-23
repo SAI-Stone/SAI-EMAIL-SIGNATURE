@@ -56,17 +56,12 @@ iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;bo
   </div>
 </section>
 
-<!-- EMAIL SIGNATURE SECTION (unchanged) -->
+<!-- EMAIL SIGNATURE SECTION -->
 <section id="signature-section" class="hidden">
   <h2>Email Signature Generator</h2>
   <iframe src="email_signature.html" title="Email Signature Generator"></iframe>
   <button class="primary back-btn" id="back-from-signature">⬅ Back to Home</button>
 </section>
-
-<!-- WATERJET SECTION (unchanged; omitted for brevity) -->
-<!-- FULL HTML updated with restored Water Jet section -->
-<!-- This update preserves all other content and restores Water Jet Calculator fully -->
-<!-- ... (rest of your document remains unchanged above this point) -->
 
 <!-- WATERJET SECTION -->
 <section id="waterjet-section" class="hidden">
@@ -135,9 +130,7 @@ iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;bo
     <input type="number" id="area-input" min="0" step="0.1" placeholder="e.g. 50">
     <details>
       <summary>Admin Settings (pattern-specific)</summary>
-      <label for="sqm-per-set">Sqm per Set</label>
-      <input type="number" id="sqm-per-set" step="0.001" value="3.1803">
-      <label for="component-config">Component Breakdown (one per line: size_mmXmm,pcs-per-set)</label>
+      <label for="component-config">Component Breakdown (size,pcs-per-set)</label>
       <textarea id="component-config" placeholder="595x595,4\n895x595,2\n595x295,2\n295x295,4"></textarea>
     </details>
     <button type="submit" class="primary">Calculate Pattern</button>
@@ -149,138 +142,109 @@ iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;bo
 
 <script>
 (function(){
-  /* === Navigation === */
-  const $=id=>document.getElementById(id);
-  const home=$('home-section');const sig=$('signature-section');const jet=$('waterjet-section');const pat=$('pattern-section');
-  $('open-signature').onclick=()=>{home.classList.add('hidden');sig.classList.remove('hidden');};
-  $('open-waterjet').onclick =()=>{home.classList.add('hidden');jet.classList.remove('hidden');};
-  $('open-pattern').onclick  =()=>{home.classList.add('hidden');pat.classList.remove('hidden');};
-  $('back-from-signature').onclick=()=>{sig.classList.add('hidden');home.classList.remove('hidden');};
-  $('back-from-pattern').onclick  =()=>{pat.classList.add('hidden');home.classList.remove('hidden');};
-  $('back-from-waterjet')&&($('back-from-waterjet').onclick=()=>{jet.classList.add('hidden');home.classList.remove('hidden');});
+  /* Navigation */
+  const $ = id => document.getElementById(id);
+  const home = $('home-section'), sig = $('signature-section'), jet = $('waterjet-section'), pat = $('pattern-section');
+  $('open-signature').onclick = () => { home.classList.add('hidden'); sig.classList.remove('hidden'); };
+  $('open-waterjet').onclick  = () => { home.classList.add('hidden'); jet.classList.remove('hidden'); };
+  $('open-pattern').onclick   = () => { home.classList.add('hidden'); pat.classList.remove('hidden'); };
+  $('back-from-signature').onclick = () => { sig.classList.add('hidden'); home.classList.remove('hidden'); };
+  $('back-from-waterjet').onclick  = () => { jet.classList.add('hidden'); home.classList.remove('hidden'); };
+  $('back-from-pattern').onclick   = () => { pat.classList.add('hidden'); home.classList.remove('hidden'); };
 
-  /* === Pattern Calculator === */
-  const tabBtns=[...document.querySelectorAll('.tab-btn')];
-  const areaInput=$('area-input');
-  const sqmPerSetEl=$('sqm-per-set');
-  const compConfigEl=$('component-config');
-  const pForm=$('pattern-form');
-  const pOutput=$('pattern-output');
-  const dlBtn=$('download-csv');
-
-  const patternDefaults={
-    '900':{sqm:3.1803,components:'595x595,4\n895x595,2\n595x295,2\n295x295,4'},
-    '600':{sqm:2.16,components:'600x600,2\n300x600,4\n300x300,4'},
-    'antline':{sqm:1.0,components:'300x75,38'},
-    'brick':{sqm:0.461,components:'230x76,55'}
-  };
-  let currentPattern='900';
-  function loadPattern(p){
-    currentPattern=p;
-    tabBtns.forEach(btn=>btn.classList.toggle('active',btn.dataset.pattern===p));
-    sqmPerSetEl.value=patternDefaults[p].sqm;
-    compConfigEl.value=patternDefaults[p].components;
-    pOutput.classList.add('hidden');
-    dlBtn.classList.add('hidden');
-  }
-  tabBtns.forEach(btn=>btn.addEventListener('click',()=>loadPattern(btn.dataset.pattern)));
-  loadPattern('900');
-
-  function parseComponents(str){
-    return str.split(/\n+/).map(line=>line.trim()).filter(Boolean).map(line=>{
-      const [size,pcs]=line.split(',');
-      const [l,w]=size.toLowerCase().split('x').map(n=>parseFloat(n));
-      const areaEach=(l*w)/1_000_000; // m²
-      return {size:size.trim(),pcsPerSet:parseFloat(pcs),areaEach};
-    });
-  }
-
-  pForm.addEventListener('submit',e=>{
-    e.preventDefault();
-    const requestedArea=parseFloat(areaInput.value)||0;
-    if(!requestedArea){alert('Please enter area');return;}
-    const sqmPerSet=parseFloat(sqmPerSetEl.value)||1;
-    const components=parseComponents(compConfigEl.value);
-    const setFraction=requestedArea/sqmPerSet; // 不取整！
-
-    // 计算每种砖的片数（向上取整到整数），再统计总覆盖面积
-    let csv='Size,Qty\n';
-    let rows='';
-    let coverage=0;
-    components.forEach(c=>{
-      const rawQty=c.pcsPerSet*setFraction;
-      const qty=Math.ceil(rawQty);
-      coverage+=qty*c.areaEach;
-      csv+=`${c.size},${qty}\n`;
-      rows+=`<tr><td>${c.size}</td><td>${qty}</td></tr>`;
-    });
-
-    const surplus=coverage-requestedArea;
-    pOutput.innerHTML=`<span><strong>Total Coverage:</strong> ${coverage.toFixed(3)} m²</span>
-      <span><strong>Requested Area:</strong> ${requestedArea.toFixed(3)} m²</span>
-      <span><strong>Surplus / Wastage:</strong> ${surplus.toFixed(3)} m²</span>
-      <details style="margin-top:10px"><summary>Component Breakdown</summary>
-        <table><thead><tr><th>Size</th><th>Qty</th></tr></thead><tbody>${rows}</tbody></table>
-      </details>`;
-    pOutput.classList.remove('hidden');
-
-    // download csv
-    const blob=new Blob([csv],{type:'text/csv'});
-    const url=URL.createObjectURL(blob);
-    dlBtn.onclick=()=>{const a=document.createElement('a');a.href=url;a.download=`${currentPattern}-pattern.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-    dlBtn.classList.remove('hidden');
+  /* Water Jet Calculator */
+  const wForm = $('waterjet-form'), wOutput = $('output');
+  $('dimension-select').addEventListener('change', e => {
+    $('custom-dimensions').classList.toggle('hidden', e.target.value !== 'custom');
   });
-})();
-    /* === Water Jet Calculator === */
-  const wForm = document.getElementById('waterjet-form');
-  const wOutput = document.getElementById('output');
-
-  wForm.addEventListener('submit', function(e) {
+  wForm.addEventListener('submit', e => {
     e.preventDefault();
-
-    const text = document.getElementById('inscription').value.trim();
-    const lengthSel = document.getElementById('dimension-select').value;
-    const length = lengthSel === 'custom' ? parseFloat(document.getElementById('custom-length').value) : parseFloat(lengthSel.split('x')[0]);
-    const width  = lengthSel === 'custom' ? parseFloat(document.getElementById('custom-width').value) : parseFloat(lengthSel.split('x')[1]);
-    const thickness = parseFloat(document.getElementById('thickness-select').value);
-    const isInlay = document.getElementById('inlay-checkbox').checked;
-
-    const basePrice = parseFloat(document.getElementById('admin-base-price').value);
-    const baseLength = parseFloat(document.getElementById('admin-base-length').value);
-    const baseWidth = parseFloat(document.getElementById('admin-base-width').value);
-    const baseThickness = parseFloat(document.getElementById('admin-base-thickness').value);
-    const inlayPrice = parseFloat(document.getElementById('admin-inlay-price').value);
-    const noInlayPrice = parseFloat(document.getElementById('admin-letter-price-no-inlay').value);
-
-    // Validation
-    if (isNaN(length) || isNaN(width) || isNaN(thickness)) {
-      alert('Please enter valid dimensions.');
-      return;
-    }
-
-    const areaFactor = (length * width) / (baseLength * baseWidth);
-    const thicknessFactor = thickness / baseThickness;
-    const textLength = text.replace(/\s/g, '').length;
-
-    let letterCost = isInlay ? inlayPrice * textLength : noInlayPrice * textLength;
-    let finalPrice = basePrice * areaFactor * thicknessFactor + letterCost;
-
+    const text = $('inscription').value.trim();
+    const [length, width] = (function(v){
+      if(v==='custom') return [+$('custom-length').value, +$('custom-width').value];
+      return v.split('x').map(Number);
+    })($('dimension-select').value);
+    const thickness = +$('thickness-select').value;
+    const basePrice = +$('admin-base-price').value;
+    const baseLen   = +$('admin-base-length').value;
+    const baseWid   = +$('admin-base-width').value;
+    const baseTh    = +$('admin-base-thickness').value;
+    const inlayP    = +$('admin-inlay-price').value;
+    const noInlayP  = +$('admin-letter-price-no-inlay').value;
+    const letterCount = text.replace(/\s+/g,'').length;
+    const areaF = (length*width)/(baseLen*baseWid);
+    const thickF= thickness/baseTh;
+    const letterCost = $('inlay-checkbox').checked ? inlayP*letterCount : noInlayP*letterCount;
+    const total = basePrice*areaF*thickF + letterCost;
     wOutput.innerHTML = `
       <span><strong>Text:</strong> ${text}</span>
-      <span><strong>Letter Count:</strong> ${textLength}</span>
-      <span><strong>Area:</strong> ${length} × ${width} mm</span>
+      <span><strong>Letter Count:</strong> ${letterCount}</span>
+      <span><strong>Dimensions:</strong> ${length}×${width} mm</span>
       <span><strong>Thickness:</strong> ${thickness} mm</span>
-      <span><strong>Base Price:</strong> $${basePrice}</span>
       <span><strong>Letter Cost:</strong> $${letterCost.toFixed(2)}</span>
-      <span><strong><big>Total Price: $${finalPrice.toFixed(2)}</big></strong></span>
+      <span><strong><big>Total Price: $${total.toFixed(2)}</big></strong></span>
     `;
     wOutput.classList.remove('hidden');
   });
 
-  // Show/hide custom dimension inputs
-  document.getElementById('dimension-select').addEventListener('change', function() {
-    document.getElementById('custom-dimensions').classList.toggle('hidden', this.value !== 'custom');
+  /* Pattern Calculator */
+  const tabBtns = [...document.querySelectorAll('.tab-btn')],
+        areaInput = $('area-input'), compEl = $('component-config'),
+        pForm = $('pattern-form'), pOut = $('pattern-output'), dl = $('download-csv');
+  let currentPattern = '900';
+  const defaults = {
+    '900': '595x595,4\n895x595,2\n595x295,2\n295x295,4',
+    '600': '600x600,2\n300x600,4\n300x300,4',
+    'antline':'300x75,38',
+    'brick':'230x76,55'
+  };
+  tabBtns.forEach(btn=>btn.addEventListener('click',()=>{
+    currentPattern=btn.dataset.pattern;
+    tabBtns.forEach(b=>b.classList.toggle('active',b===btn));
+    compEl.value = defaults[currentPattern];
+    pOut.classList.add('hidden'); dl.classList.add('hidden');
+  }));
+  compEl.value = defaults['900'];
+
+  function parseComps(text){
+    return text.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
+      const [s,p] = l.split(','); const [a,b]=s.split('x').map(Number);
+      return {size:s, pcs:+p, area:(a*b)/1e6};
+    });
+  }
+  pForm.addEventListener('submit',e=>{
+    e.preventDefault();
+    const req = +areaInput.value; if(!req) return alert('Enter area');
+    const comps = parseComps(compEl.value);
+    const sqmSet = comps.reduce((sum,c)=>sum+c.area*c.pcs,0);
+    const ratio = req/sqmSet;
+    let csv='Size,Qty\n', rows='', cov=0;
+    const raw = comps.map(c=>c.pcs*ratio), qtys = raw.map(r=>Math.ceil(r));
+    if(currentPattern==='900'){
+      // enforce pairs for first and last
+      qtys[0] = (qtys[0]/qtys[1]===2?qtys[0]:qtys[0]+1);
+      qtys[3] = (qtys[3]/qtys[2]===2?qtys[3]:qtys[3]+1);
+    }
+    qtys.forEach((q,i)=>{
+      cov+=q*comps[i].area;
+      csv+=`${comps[i].size},${q}\n`;
+      rows+=`<tr><td>${comps[i].size}</td><td>${q}</td></tr>`;
+    });
+    const surplus = cov-req;
+    pOut.innerHTML = `
+      <span><strong>Total Coverage:</strong> ${cov.toFixed(3)} m²</span>
+      <span><strong>Requested Area:</strong> ${req.toFixed(3)} m²</span>
+      <span><strong>Surplus:</strong> ${surplus.toFixed(3)} m²</span>
+      <details><summary>Component Breakdown</summary>
+        <table><tr><th>Size</th><th>Qty</th></tr>${rows}</table>
+      </details>
+    `;
+    pOut.classList.remove('hidden');
+    const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob);
+    dl.onclick=()=>{const a= document.createElement('a'); a.href=url; a.download=`${currentPattern}-pattern.csv`; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000); };
+    dl.classList.remove('hidden');
   });
+})();
 </script>
 </body>
 </html>
