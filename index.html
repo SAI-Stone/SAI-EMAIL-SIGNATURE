@@ -64,7 +64,61 @@ iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;bo
 </section>
 
 <!-- WATERJET SECTION (unchanged; omitted for brevity) -->
-<section id="waterjet-section" class="hidden"><!-- ... existing waterjet markup stays the same ... --></section>
+<!-- FULL HTML updated with restored Water Jet section -->
+<!-- This update preserves all other content and restores Water Jet Calculator fully -->
+<!-- ... (rest of your document remains unchanged above this point) -->
+
+<!-- WATERJET SECTION -->
+<section id="waterjet-section" class="hidden">
+  <h2>Water Jet Pricing Calculator</h2>
+  <form id="waterjet-form">
+    <label for="inscription">Inscription / Text (letter count auto-calculates)</label>
+    <input type="text" id="inscription" placeholder="Enter the text to be cut">
+
+    <label for="dimension-select">Dimensions (mm)</label>
+    <select id="dimension-select">
+      <option value="" disabled selected>Choose size</option>
+      <option value="800x400">800 × 400</option>
+      <option value="600x400">600 × 400</option>
+      <option value="custom">Custom…</option>
+    </select>
+
+    <div id="custom-dimensions" class="hidden">
+      <label for="custom-length">Length (mm)</label>
+      <input type="number" id="custom-length" min="1" placeholder="e.g. 750">
+      <label for="custom-width">Width (mm)</label>
+      <input type="number" id="custom-width" min="1" placeholder="e.g. 350">
+    </div>
+
+    <label for="thickness-select">Thickness (mm)</label>
+    <select id="thickness-select">
+      <option value="20" selected>20</option>
+      <option value="30">30</option>
+    </select>
+
+    <label for="inlay-checkbox"><input type="checkbox" id="inlay-checkbox"> Inlay Required</label>
+
+    <details>
+      <summary>Admin Settings (adjust anytime)</summary>
+      <label for="admin-base-price">Base Price ($)</label>
+      <input type="number" id="admin-base-price" value="300">
+      <label for="admin-base-length">Base Length (mm)</label>
+      <input type="number" id="admin-base-length" value="600">
+      <label for="admin-base-width">Base Width (mm)</label>
+      <input type="number" id="admin-base-width" value="400">
+      <label for="admin-base-thickness">Base Thickness (mm)</label>
+      <input type="number" id="admin-base-thickness" value="20">
+      <label for="admin-inlay-price">Inlay Price per Letter ($)</label>
+      <input type="number" id="admin-inlay-price" value="20">
+      <label for="admin-letter-price-no-inlay">Non-Inlay Letter Price ($)</label>
+      <input type="number" id="admin-letter-price-no-inlay" value="5">
+    </details>
+
+    <button type="submit" class="primary">Calculate Price</button>
+  </form>
+  <div id="output" class="output hidden"></div>
+  <button class="primary back-btn" id="back-from-waterjet">⬅ Back to Home</button>
+</section>
 
 <!-- PATTERN CALCULATOR SECTION -->
 <section id="pattern-section" class="hidden">
