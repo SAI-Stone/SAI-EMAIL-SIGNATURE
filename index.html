@@ -231,6 +231,56 @@ iframe{border:none;width:100%;max-width:1200px;height:800px;border-radius:8px;bo
     dlBtn.classList.remove('hidden');
   });
 })();
+    /* === Water Jet Calculator === */
+  const wForm = document.getElementById('waterjet-form');
+  const wOutput = document.getElementById('output');
+
+  wForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const text = document.getElementById('inscription').value.trim();
+    const lengthSel = document.getElementById('dimension-select').value;
+    const length = lengthSel === 'custom' ? parseFloat(document.getElementById('custom-length').value) : parseFloat(lengthSel.split('x')[0]);
+    const width  = lengthSel === 'custom' ? parseFloat(document.getElementById('custom-width').value) : parseFloat(lengthSel.split('x')[1]);
+    const thickness = parseFloat(document.getElementById('thickness-select').value);
+    const isInlay = document.getElementById('inlay-checkbox').checked;
+
+    const basePrice = parseFloat(document.getElementById('admin-base-price').value);
+    const baseLength = parseFloat(document.getElementById('admin-base-length').value);
+    const baseWidth = parseFloat(document.getElementById('admin-base-width').value);
+    const baseThickness = parseFloat(document.getElementById('admin-base-thickness').value);
+    const inlayPrice = parseFloat(document.getElementById('admin-inlay-price').value);
+    const noInlayPrice = parseFloat(document.getElementById('admin-letter-price-no-inlay').value);
+
+    // Validation
+    if (isNaN(length) || isNaN(width) || isNaN(thickness)) {
+      alert('Please enter valid dimensions.');
+      return;
+    }
+
+    const areaFactor = (length * width) / (baseLength * baseWidth);
+    const thicknessFactor = thickness / baseThickness;
+    const textLength = text.replace(/\s/g, '').length;
+
+    let letterCost = isInlay ? inlayPrice * textLength : noInlayPrice * textLength;
+    let finalPrice = basePrice * areaFactor * thicknessFactor + letterCost;
+
+    wOutput.innerHTML = `
+      <span><strong>Text:</strong> ${text}</span>
+      <span><strong>Letter Count:</strong> ${textLength}</span>
+      <span><strong>Area:</strong> ${length} × ${width} mm</span>
+      <span><strong>Thickness:</strong> ${thickness} mm</span>
+      <span><strong>Base Price:</strong> $${basePrice}</span>
+      <span><strong>Letter Cost:</strong> $${letterCost.toFixed(2)}</span>
+      <span><strong><big>Total Price: $${finalPrice.toFixed(2)}</big></strong></span>
+    `;
+    wOutput.classList.remove('hidden');
+  });
+
+  // Show/hide custom dimension inputs
+  document.getElementById('dimension-select').addEventListener('change', function() {
+    document.getElementById('custom-dimensions').classList.toggle('hidden', this.value !== 'custom');
+  });
 </script>
 </body>
 </html>
