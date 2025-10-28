@@ -340,16 +340,20 @@
             'Hunter': '0481 527 999',
             'Cameron': '0433 344 457',
             'Maleena': '0452 133 968',
-            'Bob': '0422 124 969'
+            'Bob': '0422 124 969',
+            'Maggie': '0426 596 988'
         };
 
-        const peopleWithMobile = ['Hunter', 'Cameron', 'Maleena', 'Bob'];
+        const peopleWithMobile = ['Hunter', 'Cameron', 'Maleena', 'Bob', 'Maggie'];
 
         personLinks.forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 const personName = this.dataset.name;
-                const imageName = personName + '.jpg';
+                let imageName = personName + '.jpg';
+                if (personName === 'Maggie') {
+                    imageName = 'Maggie.He.jpg';
+                }
                 var emailAddress = personName.toLowerCase() + '@saistone.com.au';
                 if (personName === 'Feifei') {
                     emailAddress = 'accounts@saistone.com.au';
