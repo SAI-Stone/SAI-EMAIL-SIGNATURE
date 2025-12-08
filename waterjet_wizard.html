@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAI Stone Pro Quote</title>
+    <title>SAI Stone Pro Quote V6</title>
     <style>
         :root {
             --primary: #005f73;
             --primary-dark: #003f4d;
             --secondary: #94a3b8;
-            --bg: #f1f5f9;
+            --bg: #f8fafc;
             --surface: #ffffff;
             --text-main: #0f172a;
             --border: #e2e8f0;
             --highlight: #e0f2fe;
+            --warning-bg: #fff7ed;
+            --warning-text: #9a3412;
         }
 
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: var(--bg); color: var(--text-main); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
 
         /* HEADER */
-        header { background: var(--surface); padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        header { background: var(--surface); padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .brand { font-weight: 800; font-size: 1.25rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .admin-trigger { background: none; border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; color: var(--secondary); font-size: 0.85rem; }
 
-        /* MAIN LAYOUT */
+        /* MAIN */
         main { flex: 1; max-width: 900px; margin: 0 auto; width: 100%; padding: 2rem 1rem; }
 
-        /* PROGRESS BAR */
+        /* PROGRESS */
         .progress-container { max-width: 500px; margin: 0 auto 2.5rem auto; position: relative; }
         .progress-line { position: absolute; top: 50%; left: 0; width: 100%; height: 3px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
         .progress-steps { display: flex; justify-content: space-between; position: relative; z-index: 1; }
@@ -35,80 +37,68 @@
         .step-dot.active { border-color: var(--primary); background: var(--primary); color: white; transform: scale(1.15); box-shadow: 0 0 0 4px rgba(0,95,115,0.2); }
         .step-dot.done { background: var(--primary); border-color: var(--primary); color: white; }
 
-        /* STEP CONTENT */
+        /* STEPS */
         .step-content { display: none; animation: slideUp 0.3s ease-out; }
         .step-content.active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1 { text-align: center; margin: 0 0 0.5rem 0; color: var(--text-main); }
-        p.subtitle { text-align: center; color: var(--secondary); margin: 0 0 2rem 0; font-size: 0.95rem; }
-
         /* CARDS */
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
         .grid-material { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
-        .grid-mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .grid-mini { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1rem; }
 
         .card { 
             background: var(--surface); border: 2px solid var(--border); border-radius: 12px; 
-            padding: 1.5rem; text-align: center; cursor: pointer; transition: 0.2s; position: relative;
+            padding: 1.2rem; text-align: center; cursor: pointer; transition: 0.2s; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .card:hover { border-color: var(--primary); transform: translateY(-2px); }
         .card.selected { border-color: var(--primary); background: var(--highlight); box-shadow: 0 0 0 2px var(--primary); }
-        .card.disabled { opacity: 0.5; cursor: not-allowed; background: #f8fafc; }
+        .card.disabled { opacity: 0.6; cursor: not-allowed; background: #f1f5f9; border-color: #e2e8f0; }
         
-        .card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .card b { font-size: 1.05rem; display: block; margin-bottom: 4px; color: var(--text-main); }
-        .card .tags { font-size: 0.75rem; color: #64748b; line-height: 1.4; display: block; max-width: 90%; }
+        .card .icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .card b { font-size: 1rem; display: block; color: var(--text-main); }
+        .card .tags { font-size: 0.75rem; color: #64748b; line-height: 1.3; margin-top: 4px; }
+        .card .price-tag { font-size: 0.75rem; color: var(--primary); font-weight: 700; margin-top: 4px; background: #ccfbf1; padding: 2px 6px; border-radius: 4px; }
 
-        /* SEARCH BAR */
-        .search-wrapper { position: relative; max-width: 500px; margin: 0 auto 1.5rem auto; }
-        .search-input { width: 100%; padding: 12px 16px 12px 40px; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .search-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,95,115,0.1); }
-        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
-
-        /* INPUTS */
-        .form-section { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1.5rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
-        input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
-
-        /* ALERTS */
-        .alert { padding: 1rem; border-radius: 8px; margin: 1rem 0; font-size: 0.9rem; display: none; }
-        .alert-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        /* SECTIONS */
+        .section-label { font-size: 0.9rem; font-weight: 700; color: #334155; margin-bottom: 8px; display: block; }
+        .input-group { background: white; padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; }
         
-        /* NAVIGATION */
+        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
+        
+        /* WARNING BOX */
+        .warning-box { background: var(--warning-bg); border: 1px solid #ffedd5; color: var(--warning-text); padding: 1rem; border-radius: 8px; font-size: 0.9rem; margin-top: 1rem; display: flex; align-items: start; gap: 10px; }
+
+        /* SEARCH */
+        .search-input { width: 100%; padding: 12px 16px; border-radius: 30px; border: 1px solid #cbd5e1; font-size: 1rem; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* NAV & RESULTS */
         .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; border-top: 1px dashed #e2e8f0; padding-top: 1.5rem; }
-        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: 0.2s; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; }
         .btn-back { background: white; border: 1px solid #cbd5e1; color: #475569; }
         .btn-next { background: var(--primary); color: white; }
-        .btn-next:hover { background: var(--primary-dark); }
         .btn-next:disabled { background: #cbd5e1; cursor: not-allowed; }
 
-        /* RESULTS */
-        .result-box { background: white; padding: 3rem 1rem; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .result-box { background: white; padding: 3rem 1rem; border-radius: 16px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
         .price-display { font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 10px 0; line-height: 1; }
-        .badge { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
-        
         .summary-table { width: 100%; max-width: 500px; margin: 2rem auto; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
-        .summary-table td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #334155; }
-        .summary-table tr:last-child td { border-bottom: none; font-weight: 700; color: var(--text-main); font-size: 1.1rem; padding-top: 1rem; }
+        .summary-table td { padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
         .summary-table .highlight { color: var(--primary); font-weight: 700; }
+        .copy-btn { background: #1e293b; color: white; padding: 14px; border-radius: 8px; cursor: pointer; width: 100%; max-width: 300px; margin: 0 auto; display: block; font-weight: 600; border: none; }
 
-        .copy-btn { width: 100%; max-width: 300px; margin: 0 auto; background: #1e293b; color: white; padding: 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; }
-        .copy-btn:hover { background: black; }
-
-        /* ADMIN MODAL */
+        /* ADMIN */
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 100; display: none; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 2rem 0; }
         .modal-content { background: white; width: 90%; max-width: 500px; padding: 2rem; border-radius: 12px; }
-        .admin-row { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
-        .admin-row input { width: 100px; text-align: right; }
+        .admin-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center; }
+        .admin-row input { width: 80px; text-align: right; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="brand">💎 SAI Stone Quote</div>
-    <button class="admin-trigger" onclick="openAdmin()">⚙️ Admin</button>
+    <button class="admin-trigger" onclick="toggleAdmin()">⚙️ Admin</button>
 </header>
 
 <main>
@@ -123,40 +113,51 @@
     </div>
 
     <div class="step-content active" id="step1">
-        <h1>Select Product</h1>
+        <h1 style="text-align:center; margin-bottom:0.5rem">Select Product</h1>
         <p class="subtitle">What are we fabricating?</p>
         <div class="grid-3">
             <div class="card" onclick="setProduct('pool', this)">
                 <span class="icon">🏊</span>
                 <b>Pool Coping</b>
-                <span class="tags">Curves, Steps, Linear Runs</span>
+                <span class="tags">Curved / Linear Runs</span>
             </div>
             <div class="card" onclick="setProduct('custom', this)">
                 <span class="icon">📐</span>
                 <b>Custom Cut</b>
-                <span class="tags">Hearths, Benchtops, Slabs</span>
+                <span class="tags">Hearths / Benchtops</span>
             </div>
             <div class="card" onclick="setProduct('artistic', this)">
                 <span class="icon">🎨</span>
-                <b>Artistic / Signage</b>
-                <span class="tags">Logos, Inlay, Complex</span>
+                <b>Artistic</b>
+                <span class="tags">Logos / Inlay</span>
             </div>
         </div>
     </div>
 
     <div class="step-content" id="step2">
-        <h1 id="detailsHeader">Dimensions</h1>
-        <p class="subtitle">Enter size and edge requirements</p>
+        <h1 style="text-align:center; margin-bottom:0.5rem">Details & Edge</h1>
+        <p class="subtitle">Dimensions and Edge Treatment</p>
         
-        <div id="dynamicInputs"></div>
+        <div id="dynamicInputs" class="input-group"></div>
 
-        <div id="edgeSelector" style="display:none; margin-top:2rem;">
-            <label style="margin-bottom:10px;">Edge Profile</label>
-            <div class="grid-mini" id="edgeGrid">
+        <div id="poolOptions" style="display:none;">
+            
+            <span class="section-label">1. Edge Profile (Shape)</span>
+            <div class="grid-mini" id="edgeProfileGrid"></div>
+
+            <span class="section-label">2. Edge Finish (Texture)</span>
+            <div class="grid-mini" id="edgeFinishGrid"></div>
+            
+            <div class="warning-box">
+                <span style="font-size:1.2rem">⚠️</span>
+                <div>
+                    <strong>Client Notice:</strong> We can only produce <strong>Sawn</strong> or <strong>Honed</strong> edges.<br>
+                    Flamed, Sandblasted, or Tumbled finishes <u>cannot</u> be applied to the cut edge.
                 </div>
+            </div>
         </div>
 
-        <div class="alert alert-error" id="errorMsg"></div>
+        <div class="alert alert-error" id="errorMsg" style="display:none; color:red; margin-top:10px;">Please check dimensions.</div>
 
         <div class="nav-btns">
             <button class="btn btn-back" onclick="navTo(1)">Back</button>
@@ -165,22 +166,15 @@
     </div>
 
     <div class="step-content" id="step3">
-        <h1>Material Selection</h1>
-        <p class="subtitle">Search by Stone Name (e.g. "Blueocean")</p>
+        <h1 style="text-align:center; margin-bottom:0.5rem">Material</h1>
+        <p class="subtitle">Select Stone & Thickness</p>
 
-        <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Search stone name..." onkeyup="filterMaterials(this.value)">
-        </div>
+        <input type="text" class="search-input" placeholder="🔍 Search stone name (e.g. Zen, Blueocean)..." onkeyup="filterMat(this.value)">
 
-        <div class="grid-material" id="materialGrid">
-            </div>
+        <div class="grid-material" id="materialGrid"></div>
 
-        <div style="margin-top:2rem;">
-            <label style="margin-bottom:10px;">Select Thickness</label>
-            <div class="grid-mini" id="thicknessGrid">
-                </div>
-        </div>
+        <span class="section-label" style="margin-top:2rem">Thickness</span>
+        <div class="grid-mini" id="thicknessGrid"></div>
 
         <div class="nav-btns">
             <button class="btn btn-back" onclick="navTo(2)">Back</button>
@@ -190,14 +184,11 @@
 
     <div class="step-content" id="step4">
         <div class="result-box">
-            <span class="badge">GST Inclusive</span>
+            <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:20px; font-weight:800; font-size:0.75rem;">GST INCLUSIVE</span>
             <h3>Total Estimate</h3>
             <div class="price-display" id="finalPrice">$0.00</div>
-            
-            <table class="summary-table" id="summaryTable">
-                </table>
-
-            <button class="copy-btn" onclick="copyQuote()">📄 Copy to Clipboard</button>
+            <table class="summary-table" id="summaryTable"></table>
+            <button class="copy-btn" onclick="copyQuote()">📄 Copy Summary</button>
         </div>
         <div class="nav-btns">
             <button class="btn btn-back" onclick="navTo(3)">Edit</button>
@@ -208,11 +199,8 @@
 
 <div class="modal-overlay" id="adminModal">
     <div class="modal-content">
-        <h2 style="margin-top:0">⚙️ Admin Configuration</h2>
-        <p style="font-size:0.8rem; color:#666">Update multipliers and base rates (GST Inc).</p>
-        
+        <h2>⚙️ Admin Config (GST Inc)</h2>
         <div id="adminForm"></div>
-
         <div class="nav-btns">
             <button class="btn btn-back" onclick="toggleAdmin()">Cancel</button>
             <button class="btn btn-next" onclick="saveConfig()">Save</button>
@@ -221,33 +209,14 @@
 </div>
 
 <script>
-    /* --- CONFIGURATION --- 
-       Here we map Specific Families to Multipliers.
-       Sales selects "Bluestone", code knows it is "Hard (1.3)".
-    */
+    // --- 1. CONFIGURATION ---
     const defaultConfig = {
         minCharge: 165,
         materials: [
-            { 
-                category: "Limestone / Travertine", 
-                multiplier: 1.0, 
-                examples: "Galala, Lime Greige, Sunny Menia, Belgium Blue, Moonlight Grey, Beige, Classic" 
-            },
-            { 
-                category: "Bluestone (Basalt)", 
-                multiplier: 1.3, 
-                examples: "Steel Blue, Blueocean, Antline, Lux Black, Stormy Grey" 
-            },
-            { 
-                category: "Granite / Marble", 
-                multiplier: 1.3, 
-                examples: "Zen Grey, Ken Black, Ash Grey, Sesame White, Black Pearl, Frozen Blue, Antarctica White" 
-            },
-            { 
-                category: "Porcelain / Porphyry", 
-                multiplier: 1.6, 
-                examples: "Porcelain Tiles, QLD Porphyry Grey, QLD Porphyry Brown" 
-            }
+            { category: "Limestone / Travertine", val: 1.0, tags: "Galala, Lime Greige, Sunny Menia, Belgium Blue, Moonlight Grey" },
+            { category: "Bluestone (Basalt)", val: 1.3, tags: "Steel Blue, Blueocean, Antline, Lux Black, Stormy Grey" },
+            { category: "Granite / Marble", val: 1.3, tags: "Zen Grey, Ken Black, Ash Grey, Sesame White, Black Pearl, Frozen Blue" },
+            { category: "Porcelain / Porphyry", val: 1.6, tags: "Porcelain Tiles, QLD Porphyry" }
         ],
         thickness: [
             { name: "20mm", val: 1.0 },
@@ -258,266 +227,252 @@
         fees: { template: 605, pencil: 16.5, bullnose: 49.5, honed: 27.5 }
     };
 
-    let config = JSON.parse(localStorage.getItem('saiStoneConfigV5')) || defaultConfig;
-    
+    let config = JSON.parse(localStorage.getItem('saiStoneConfigV6')) || defaultConfig;
+
     // State
     let state = {
         product: '',
-        edge: 'none',
-        matIndex: 0,
-        thkIndex: 0
+        edgeProfile: 'none',
+        edgeFinish: 'sawn',
+        matIdx: 0,
+        thkIdx: 0
     };
 
-    /* --- INITIALIZATION --- */
+    // --- 2. RENDERERS ---
     function init() {
         renderMaterials();
         renderThickness();
-        renderEdges();
+        renderEdgeOptions();
     }
 
-    /* --- RENDERERS --- */
     function renderMaterials() {
-        const grid = document.getElementById('materialGrid');
-        grid.innerHTML = config.materials.map((m, i) => `
-            <div class="card material-card ${state.matIndex === i ? 'selected' : ''}" onclick="selectMat(${i})">
+        document.getElementById('materialGrid').innerHTML = config.materials.map((m, i) => `
+            <div class="card mat-card ${state.matIdx===i?'selected':''}" onclick="setMat(${i})">
                 <b>${m.category}</b>
-                <span class="tags">${m.examples}</span>
+                <span class="tags">${m.tags}</span>
             </div>
         `).join('');
     }
 
     function renderThickness() {
         document.getElementById('thicknessGrid').innerHTML = config.thickness.map((t, i) => `
-            <div class="card ${state.thkIndex === i ? 'selected' : ''}" onclick="selectThk(${i})">
+            <div class="card ${state.thkIdx===i?'selected':''}" onclick="setThk(${i})">
                 <b>${t.name}</b>
             </div>
         `).join('');
     }
 
-    function renderEdges() {
-        const edges = [
+    function renderEdgeOptions() {
+        // Profiles
+        const profiles = [
             { id: 'none', name: 'Sawn / Straight', icon: '📏', price: 0 },
             { id: 'pencil', name: 'Pencil Round', icon: '✏️', price: config.fees.pencil },
             { id: 'bullnose', name: 'Bullnose', icon: '⭕', price: config.fees.bullnose },
-            { id: 'dropface', name: 'Dropface', icon: '🚫', price: 0, disabled: true }
+            { id: 'dropface', name: 'Dropface', icon: '🚫', disabled: true }
         ];
-        
-        document.getElementById('edgeGrid').innerHTML = edges.map(e => `
-            <div class="card ${state.edge === e.id ? 'selected' : ''} ${e.disabled ? 'disabled' : ''}" onclick="selectEdge('${e.id}')">
-                <span class="icon">${e.icon}</span>
-                <b>${e.name}</b>
-                ${e.price > 0 ? `<span style="font-size:0.7rem; color:#0f766e;">+$${e.price}</span>` : ''}
+        document.getElementById('edgeProfileGrid').innerHTML = profiles.map(p => `
+            <div class="card ${state.edgeProfile===p.id?'selected':''} ${p.disabled?'disabled':''}" onclick="setProfile('${p.id}')">
+                <span class="icon">${p.icon}</span>
+                <b>${p.name}</b>
+                ${p.price>0 ? `<span class="price-tag">+$${p.price}</span>`:''}
+            </div>
+        `).join('');
+
+        // Finishes
+        const finishes = [
+            { id: 'sawn', name: 'Sawn (Standard)', icon: '🌫️', price: 0 },
+            { id: 'honed', name: 'Honed (Polished)', icon: '✨', price: config.fees.honed }
+        ];
+        document.getElementById('edgeFinishGrid').innerHTML = finishes.map(f => `
+            <div class="card ${state.edgeFinish===f.id?'selected':''}" onclick="setFinish('${f.id}')">
+                <span class="icon">${f.icon}</span>
+                <b>${f.name}</b>
+                ${f.price>0 ? `<span class="price-tag">+$${f.price}</span>`:''}
             </div>
         `).join('');
     }
 
-    /* --- ACTIONS --- */
-    function selectMat(i) { state.matIndex = i; renderMaterials(); }
-    function selectThk(i) { state.thkIndex = i; renderThickness(); }
-    function selectEdge(id) { 
-        if(id === 'dropface') return alert('Dropface not available locally.');
-        state.edge = id; renderEdges(); 
-    }
-
-    function filterMaterials(text) {
-        const cards = document.querySelectorAll('.material-card');
-        const term = text.toLowerCase();
-        cards.forEach(card => {
-            const content = card.innerText.toLowerCase();
-            card.style.display = content.includes(term) ? 'flex' : 'none';
-        });
-    }
-
+    // --- 3. LOGIC & NAV ---
     function setProduct(type, el) {
         state.product = type;
         document.querySelectorAll('#step1 .card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
         
-        // Setup Inputs
         const div = document.getElementById('dynamicInputs');
-        const edgeDiv = document.getElementById('edgeSelector');
-        
+        const poolOpts = document.getElementById('poolOptions');
+
         if(type === 'pool') {
             div.innerHTML = `
-                <div class="form-section">
+                <div class="input-group">
                     <label>Total Length (Linear Meters)</label>
-                    <input type="number" id="inp_len" placeholder="e.g. 15.5">
-                    <label style="margin-top:15px; display:flex; gap:10px; align-items:center;">
-                        <input type="checkbox" id="inp_temp" style="width:auto;"> Include Templating? (+$${config.fees.template})
+                    <input type="number" id="inp_len" placeholder="e.g. 12.5">
+                    <label style="margin-top:15px; display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="inp_temp"> Include Templating? (+$${config.fees.template})
                     </label>
                 </div>`;
-            edgeDiv.style.display = 'block';
+            poolOpts.style.display = 'block';
         } else if(type === 'custom') {
             div.innerHTML = `
-                <div class="form-section">
+                <div class="input-group">
                     <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <div style="flex:1"><label>Length (mm)</label><input type="number" id="inp_l"></div>
-                        <div style="flex:1"><label>Width (mm)</label><input type="number" id="inp_w"></div>
+                        <div><label>Length (mm)</label><input type="number" id="inp_l"></div>
+                        <div><label>Width (mm)</label><input type="number" id="inp_w"></div>
                     </div>
-                    <label>Cut-outs (Qty)</label><input type="number" id="inp_holes" value="0">
-                    <label style="margin-top:10px">Polished Edge Length (mm)</label><input type="number" id="inp_polish" value="0">
+                    <label>Internal Cut-outs (Qty)</label><input type="number" id="inp_holes" value="0">
+                    <label style="margin-top:10px;">Honed/Polished Edge Length (mm)</label>
+                    <input type="number" id="inp_polish" value="0">
+                    <span style="font-size:0.8rem; color:#64748b">Only enter the length that needs polishing. Default is Sawn.</span>
                 </div>`;
-            edgeDiv.style.display = 'none';
+            poolOpts.style.display = 'none';
         } else {
             div.innerHTML = `
-                <div class="form-section">
-                    <label>Total Area (m²)</label><input type="number" id="inp_area">
+                <div class="input-group">
+                    <label>Area (m²)</label><input type="number" id="inp_area">
                     <label style="margin-top:10px">Complexity</label>
                     <select id="inp_comp"><option value="1">Basic</option><option value="1.5">Medium</option><option value="2.5">High</option></select>
                 </div>`;
-            edgeDiv.style.display = 'none';
+            poolOpts.style.display = 'none';
         }
-
-        setTimeout(() => navTo(2), 200);
+        setTimeout(()=>navTo(2), 200);
     }
 
-    /* --- NAV & CALC --- */
+    function setMat(i) { state.matIdx = i; renderMaterials(); }
+    function setThk(i) { state.thkIdx = i; renderThickness(); }
+    function setProfile(id) { 
+        if(id==='dropface') return alert('Dropface unavailable.');
+        state.edgeProfile = id; renderEdgeOptions(); 
+    }
+    function setFinish(id) { state.edgeFinish = id; renderEdgeOptions(); }
+    
+    function filterMat(txt) {
+        document.querySelectorAll('.mat-card').forEach(c => {
+            c.style.display = c.innerText.toLowerCase().includes(txt.toLowerCase()) ? 'flex':'none';
+        });
+    }
+
     function navTo(n) {
         document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
         document.getElementById(`step${n}`).classList.add('active');
-        
-        for(let i=1; i<=4; i++) {
-            const dot = document.getElementById(`dot${i}`);
-            dot.classList.remove('active', 'done');
-            if(i === n) dot.classList.add('active');
-            if(i < n) dot.classList.add('done');
+        for(let i=1;i<=4;i++) {
+            const d = document.getElementById(`dot${i}`);
+            d.classList.remove('active','done');
+            if(i===n) d.classList.add('active');
+            if(i<n) d.classList.add('done');
         }
-        document.getElementById('errorMsg').style.display = 'none';
     }
 
     function validateStep2() {
         let valid = true;
-        if(state.product === 'pool' && !document.getElementById('inp_len').value) valid = false;
-        if(state.product === 'custom' && (!document.getElementById('inp_l').value || !document.getElementById('inp_w').value)) valid = false;
-        if(state.product === 'artistic' && !document.getElementById('inp_area').value) valid = false;
-
-        if(!valid) {
-            const e = document.getElementById('errorMsg');
-            e.innerText = "Please fill in all dimensions.";
-            e.style.display = 'block';
-        } else {
-            navTo(3);
-        }
+        if(state.product==='pool' && !document.getElementById('inp_len').value) valid = false;
+        if(state.product==='custom' && (!document.getElementById('inp_l').value || !document.getElementById('inp_w').value)) valid = false;
+        if(state.product==='artistic' && !document.getElementById('inp_area').value) valid = false;
+        
+        document.getElementById('errorMsg').style.display = valid ? 'none':'block';
+        if(valid) navTo(3);
     }
 
     function calculate() {
-        const mat = config.materials[state.matIndex];
-        const thk = config.thickness[state.thkIndex];
-        const factor = mat.multiplier * thk.val;
-
-        let total = 0;
-        let rows = '';
-        let clip = `QUOTE (GST INC)\nMaterial: ${mat.category} ${thk.name}\n`;
+        const mat = config.materials[state.matIdx];
+        const thk = config.thickness[state.thkIdx];
+        const factor = mat.val * thk.val;
+        
+        let total = 0, rows = '', clip = `QUOTE (GST INC)\nMaterial: ${mat.category} ${thk.name}\n`;
 
         if(state.product === 'pool') {
             const len = parseFloat(document.getElementById('inp_len').value);
             const hasTemp = document.getElementById('inp_temp').checked;
             
-            let edgePrice = 0;
-            if(state.edge === 'pencil') edgePrice = config.fees.pencil;
-            if(state.edge === 'bullnose') edgePrice = config.fees.bullnose;
+            let extra = 0;
+            if(state.edgeProfile === 'pencil') extra += config.fees.pencil;
+            if(state.edgeProfile === 'bullnose') extra += config.fees.bullnose;
+            if(state.edgeFinish === 'honed') extra += config.fees.honed; // Add finish cost
 
-            let unitRate = (config.rates.pool + edgePrice) * factor;
-            let subtotal = unitRate * len;
-            let tempCost = hasTemp ? config.fees.template : 0;
-            
-            total = subtotal + tempCost;
+            let unitRate = (config.rates.pool + extra) * factor;
+            let sub = unitRate * len;
+            let temp = hasTemp ? config.fees.template : 0;
+            total = sub + temp;
 
-            rows += `<tr><td>Cutting Length</td><td>${len} lm</td></tr>`;
-            rows += `<tr><td>Edge Profile</td><td>${state.edge.toUpperCase()}</td></tr>`;
-            rows += `<tr><td class="highlight">UNIT RATE</td><td class="highlight">$${unitRate.toFixed(2)} / lm</td></tr>`;
-            if(hasTemp) rows += `<tr><td>Templating</td><td>$${tempCost}</td></tr>`;
+            rows += `<tr><td>Length</td><td>${len} lm</td></tr>`;
+            rows += `<tr><td>Profile</td><td>${state.edgeProfile} + ${state.edgeFinish}</td></tr>`;
+            rows += `<tr><td class="highlight">UNIT RATE</td><td class="highlight">$${unitRate.toFixed(2)}/lm</td></tr>`;
+            if(hasTemp) rows += `<tr><td>Templating</td><td>$${temp}</td></tr>`;
             
-            clip += `Pool Coping (${len}lm)\nProfile: ${state.edge}\nUnit Rate: $${unitRate.toFixed(2)}/lm\nTemplate: ${hasTemp?'Yes':'No'}`;
+            clip += `Pool Coping (${len}lm)\nEdge: ${state.edgeProfile}, ${state.edgeFinish}\nUnit Rate: $${unitRate.toFixed(2)}/lm\nTemplate: ${hasTemp?'Yes':'No'}`;
 
         } else if(state.product === 'custom') {
-            const l = document.getElementById('inp_l').value / 1000;
-            const w = document.getElementById('inp_w').value / 1000;
+            const l = document.getElementById('inp_l').value/1000;
+            const w = document.getElementById('inp_w').value/1000;
             const holes = document.getElementById('inp_holes').value;
-            const polish = document.getElementById('inp_polish').value / 1000;
+            const polishLen = document.getElementById('inp_polish').value/1000;
             const area = l*w;
-
+            
             let base = (area * config.rates.custom) + (holes * config.rates.hole);
             let matCost = base * factor;
-            let polishCost = (polish * config.fees.honed) * factor;
+            // Polish cost usually affected by Material Factor too
+            let polishCost = (polishLen * config.fees.honed) * factor; 
 
             total = matCost + polishCost;
 
-            rows += `<tr><td>Dimensions</td><td>${(l*1000).toFixed(0)}x${(w*1000).toFixed(0)}mm</td></tr>`;
+            rows += `<tr><td>Size</td><td>${(l*1000).toFixed(0)}x${(w*1000).toFixed(0)}mm</td></tr>`;
             rows += `<tr><td>Cut-outs</td><td>${holes}</td></tr>`;
-            rows += `<tr><td>Polished Edge</td><td>${polish} lm</td></tr>`;
-            
-            clip += `Custom Cut ${(l*1000).toFixed(0)}x${(w*1000).toFixed(0)}mm\nHoles: ${holes}\nPolish: ${polish}m`;
+            rows += `<tr><td>Honed Edge</td><td>${polishLen} m</td></tr>`;
+            clip += `Custom ${(l*1000).toFixed(0)}x${(w*1000).toFixed(0)}mm\nHoles: ${holes}\nHoned Edge: ${polishLen}m`;
+
         } else {
             const area = document.getElementById('inp_area').value;
-            const comp = document.getElementById('inp_comp').value;
-            total = (area * config.rates.artistic * comp) * factor;
-            rows += `<tr><td>Area</td><td>${area} m²</td></tr><tr><td>Complexity</td><td>x${comp}</td></tr>`;
-            clip += `Artistic (${area}m2) Tier ${comp}`;
+            const c = document.getElementById('inp_comp').value;
+            total = (area * config.rates.artistic * c) * factor;
+            rows += `<tr><td>Area</td><td>${area} m²</td></tr><tr><td>Comp</td><td>x${c}</td></tr>`;
+            clip += `Artistic ${area}m2 (x${c})`;
         }
 
         if(total < config.minCharge) {
             total = config.minCharge;
-            rows += `<tr><td colspan="2" style="color:red; font-size:0.8rem; text-align:center;">Minimum Charge Applied</td></tr>`;
+            rows += `<tr><td colspan="2" style="color:red;text-align:center">(Min Charge Applied)</td></tr>`;
             clip += `\n(Min Charge Applied)`;
         }
-
+        
         rows += `<tr><td>TOTAL</td><td>$${total.toFixed(2)}</td></tr>`;
         clip += `\n--------------\nTOTAL: $${total.toFixed(2)}`;
 
-        document.getElementById('finalPrice').innerText = '$' + total.toFixed(2);
+        document.getElementById('finalPrice').innerText = '$'+total.toFixed(2);
         document.getElementById('summaryTable').innerHTML = rows;
         document.querySelector('.copy-btn').setAttribute('data-text', clip);
-        
         navTo(4);
     }
 
     function copyQuote() {
-        const t = document.querySelector('.copy-btn').getAttribute('data-text');
-        navigator.clipboard.writeText(t).then(() => alert("Copied to clipboard!"));
+        navigator.clipboard.writeText(document.querySelector('.copy-btn').getAttribute('data-text')).then(()=>alert('Copied!'));
     }
 
-    /* --- ADMIN --- */
     function toggleAdmin() {
         const m = document.getElementById('adminModal');
-        if(m.style.display === 'flex') {
-            m.style.display = 'none';
-        } else {
-            // Render Admin Inputs
-            const c = config;
-            document.getElementById('adminForm').innerHTML = `
-                <div style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:10px;">
-                    <strong>Base Rates ($)</strong>
-                    <div class="admin-row"><label>Pool/lm</label><input id="adm_pool" value="${c.rates.pool}"></div>
-                    <div class="admin-row"><label>Custom/m2</label><input id="adm_cust" value="${c.rates.custom}"></div>
-                    <div class="admin-row"><label>Template</label><input id="adm_temp" value="${c.fees.template}"></div>
-                </div>
-                <div style="background:#f8fafc; padding:10px; border-radius:8px;">
-                    <strong>Multipliers</strong>
-                    ${c.materials.map((m,i) => `
-                        <div class="admin-row" style="font-size:0.8rem;">
-                            <label style="flex:2">${m.category}</label>
-                            <input id="adm_mat_${i}" value="${m.multiplier}" step="0.1">
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            m.style.display = 'flex';
-        }
+        if(m.style.display==='flex') { m.style.display='none'; return; }
+        
+        const c = config;
+        document.getElementById('adminForm').innerHTML = `
+            <div style="background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:10px">
+                <b>Rates (GST Inc)</b>
+                <div class="admin-row"><label>Pool/lm</label><input id="adm_pool" value="${c.rates.pool}"></div>
+                <div class="admin-row"><label>Honed/m</label><input id="adm_honed" value="${c.fees.honed}"></div>
+                <div class="admin-row"><label>Template</label><input id="adm_temp" value="${c.fees.template}"></div>
+            </div>
+             <div style="background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:10px">
+                <b>Material Multipliers</b>
+                ${c.materials.map((m,i)=>`<div class="admin-row" style="font-size:0.8rem"><label style="flex:2">${m.category}</label><input id="mat_${i}" value="${m.val}"></div>`).join('')}
+            </div>
+        `;
+        m.style.display='flex';
     }
 
     function saveConfig() {
         config.rates.pool = parseFloat(document.getElementById('adm_pool').value);
-        config.rates.custom = parseFloat(document.getElementById('adm_cust').value);
+        config.fees.honed = parseFloat(document.getElementById('adm_honed').value);
         config.fees.template = parseFloat(document.getElementById('adm_temp').value);
+        config.materials.forEach((m,i)=> m.val = parseFloat(document.getElementById(`mat_${i}`).value));
         
-        config.materials.forEach((m, i) => {
-            m.multiplier = parseFloat(document.getElementById(`adm_mat_${i}`).value);
-        });
-
-        localStorage.setItem('saiStoneConfigV5', JSON.stringify(config));
-        toggleAdmin();
-        init(); // Refresh UI
+        localStorage.setItem('saiStoneConfigV6', JSON.stringify(config));
+        toggleAdmin(); init();
     }
 
     init();
