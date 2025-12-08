@@ -3,438 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAI Stone Quote Wizard</title>
+    <title>SAI Stone Pro Quote System</title>
     <style>
         :root {
-            --primary: #0f766e; /* Teal 颜色，更稳重 */
-            --primary-dark: #0f5132;
-            --accent: #f59e0b; /* 警告色 */
-            --bg: #f3f4f6;
+            --primary: #005f73; /* 深青色，专业感 */
+            --primary-light: #0a9396;
+            --accent: #ee9b00;
+            --bg: #f0f4f8;
             --surface: #ffffff;
-            --text: #1f2937;
-            --border: #e5e7eb;
-            --error: #ef4444;
+            --text-main: #2b2d42;
+            --text-sub: #8d99ae;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
+
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+        body { background: var(--bg); color: var(--text-main); margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* Top Navigation */
-        nav { background: var(--surface); padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .brand { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -0.5px; }
-        .settings-btn { border: none; background: none; font-size: 1.2rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
-        .settings-btn:hover { opacity: 1; transform: rotate(90deg); }
+        /* HEADER */
+        header { background: var(--surface); padding: 1rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        .brand { font-weight: 800; font-size: 1.3rem; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .admin-trigger { background: transparent; border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; cursor: pointer; color: var(--text-sub); transition: 0.2s; font-size: 0.9rem; }
+        .admin-trigger:hover { background: #e2e8f0; color: var(--text-main); }
 
-        /* Wizard Container */
-        .container { max-width: 650px; margin: 2rem auto; padding: 0 1rem; flex: 1; display: flex; flex-direction: column; }
-        
-        /* Progress Bar */
-        .progress-track { background: #e5e7eb; height: 8px; border-radius: 4px; margin-bottom: 2rem; overflow: hidden; }
-        .progress-fill { background: var(--primary); height: 100%; width: 20%; transition: width 0.4s ease; }
+        /* WIZARD CONTAINER */
+        main { flex: 1; max-width: 800px; margin: 2rem auto; width: 100%; padding: 0 1rem; }
 
-        /* Cards & Choices */
-        .step { display: none; animation: slideUp 0.4s ease-out; }
-        .step.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* PROGRESS STEPS */
+        .progress-bar { display: flex; justify-content: space-between; margin-bottom: 2rem; position: relative; }
+        .progress-bar::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: #e2e8f0; z-index: 0; transform: translateY(-50%); }
+        .p-step { position: relative; z-index: 1; background: #e2e8f0; color: var(--text-sub); width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 0.9rem; transition: 0.3s; }
+        .p-step.active { background: var(--primary); color: white; transform: scale(1.1); box-shadow: 0 0 0 4px rgba(0, 95, 115, 0.2); }
+        .p-step.completed { background: var(--primary-light); color: white; }
 
-        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; text-align: center; color: #111; }
-        p.subtitle { text-align: center; color: #6b7280; margin-bottom: 2rem; }
+        /* STEPS CONTENT */
+        .step-content { display: none; animation: fadeIn 0.3s ease-out; }
+        .step-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .grid-options { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media(min-width: 500px) { .grid-options { grid-template-columns: 1fr 1fr; } }
+        h1 { text-align: center; margin-bottom: 0.5rem; color: var(--text-main); }
+        p.subtitle { text-align: center; color: var(--text-sub); margin-bottom: 2rem; margin-top: 0; }
 
-        .option-card {
-            background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
-            padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative;
-        }
-        .option-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 118, 110, 0.1); }
-        .option-card.selected { border-color: var(--primary); background: #f0fdfa; ring: 2px solid var(--primary); }
-        .option-card .icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
-        .option-card .label { font-weight: 700; font-size: 1.1rem; }
-        .option-card .desc { font-size: 0.85rem; color: #6b7280; margin-top: 0.3rem; }
+        /* CARDS & INPUTS */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .card { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 2px solid var(--border); text-align: center; cursor: pointer; transition: 0.2s; }
+        .card:hover { border-color: var(--primary-light); transform: translateY(-3px); }
+        .card.selected { border-color: var(--primary); background: #f0fdfe; box-shadow: 0 0 0 2px var(--primary); }
+        .card .icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+        .card b { display: block; margin-bottom: 4px; color: var(--primary); }
 
-        /* Form Inputs */
-        .input-group { background: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 1rem; }
-        label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem; }
-        input, select { width: 100%; padding: 0.8rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; margin-bottom: 1rem; }
-        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.2); }
+        .form-box { background: var(--surface); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); }
+        .input-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; }
+        input[type="number"], select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        input:focus, select:focus { outline: 2px solid var(--primary); border-color: transparent; }
+        .note { font-size: 0.85rem; color: var(--text-sub); margin-top: 5px; display: block; }
 
-        /* Warning Boxes */
-        .warning-box { background: #fffbeb; border-left: 4px solid var(--accent); padding: 1rem; margin: 1rem 0; font-size: 0.9rem; color: #92400e; border-radius: 4px; display: none; }
-        .error-box { background: #fef2f2; border: 1px solid var(--error); color: var(--error); padding: 1rem; border-radius: 8px; text-align: center; margin-top: 10px; display: none; }
+        /* ALERTS */
+        .alert { padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+        .alert-warn { background: #fff7ed; border: 1px solid #ffedd5; color: #9a3412; }
+        .alert-error { background: #fef2f2; border: 1px solid #fee2e2; color: #991b1b; display: none; }
 
-        /* Buttons */
+        /* BUTTONS */
         .nav-btns { display: flex; justify-content: space-between; margin-top: 2rem; }
-        .btn { padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; transition: 0.2s; }
-        .btn-back { background: #e5e7eb; color: #374151; }
-        .btn-next { background: var(--primary); color: white; width: 100%; margin-left: 1rem; }
-        .btn-next:hover { background: var(--primary-dark); }
-        .btn-next:disabled { background: #9ca3af; cursor: not-allowed; }
+        .btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; transition: 0.2s; }
+        .btn-back { background: #e2e8f0; color: var(--text-main); }
+        .btn-next { background: var(--primary); color: white; }
+        .btn-next:hover { background: var(--primary-light); }
 
-        /* Result Screen */
-        .result-box { background: var(--surface); padding: 2.5rem; border-radius: 16px; text-align: center; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .price-tag { font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 0.5rem 0; letter-spacing: -1px; }
-        .breakdown { text-align: left; margin-top: 2rem; border-top: 1px dashed var(--border); padding-top: 1rem; font-size: 0.9rem; }
-        .line-item { display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: #4b5563; }
-        .line-item.bold { font-weight: 700; color: #111; font-size: 1rem; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.5rem; }
+        /* RESULT PAGE */
+        .result-card { background: var(--surface); padding: 3rem; border-radius: 16px; text-align: center; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+        .price-large { font-size: 3.5rem; font-weight: 800; color: var(--primary); line-height: 1.1; }
+        .gst-tag { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 1rem; vertical-align: middle; }
+        
+        .rate-breakdown { background: #f8fafc; border: 1px dashed var(--border); padding: 1rem; margin: 1.5rem 0; border-radius: 8px; text-align: left; }
+        .rate-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .rate-row.highlight { font-weight: 700; color: var(--primary); border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 8px; }
 
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 99; }
-        .modal-overlay.open { display: flex; }
-        .modal { background: white; padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px; }
+        .copy-btn { width: 100%; background: var(--text-main); color: white; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .copy-btn:hover { background: black; }
+
+        /* ADMIN MODAL (HIERARCHICAL) */
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 100; display: none; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 2rem 0; }
+        .modal-box { background: white; width: 90%; max-width: 600px; padding: 2rem; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+        
+        details { margin-bottom: 1rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        summary { padding: 1rem; background: #f8fafc; font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        summary::after { content: '▼'; font-size: 0.8rem; color: var(--text-sub); transition: 0.2s; }
+        details[open] summary::after { transform: rotate(180deg); }
+        .admin-section { padding: 1rem; background: white; }
+
+        .admin-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .admin-row input { padding: 8px; }
+        .admin-row input.name-input { flex: 2; }
+        .admin-row input.val-input { flex: 1; }
+        .del-btn { background: #fee2e2; color: #ef4444; border: none; border-radius: 4px; width: 30px; height: 35px; cursor: pointer; }
+        .add-btn { background: #dbeafe; color: #2563eb; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 5px; }
+
+        #toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 200; left: 50%; bottom: 30px; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="brand">SAI Stone Quote</div>
-    <button class="settings-btn" onclick="toggleAdmin()">⚙️</button>
-</nav>
+<header>
+    <div class="brand">
+        💎 SAI Stone Pricing
+    </div>
+    <button class="admin-trigger" onclick="openAdmin()">⚙️ Admin Config</button>
+</header>
 
-<div class="container">
-    <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
+<main>
+    <div class="progress-bar">
+        <div class="p-step active" id="p1">1</div>
+        <div class="p-step" id="p2">2</div>
+        <div class="p-step" id="p3">3</div>
+        <div class="p-step" id="p4">$</div>
+    </div>
 
-    <div class="step active" id="step1">
-        <h1>What are we making?</h1>
-        <p class="subtitle">Select the product type</p>
-        <div class="grid-options">
-            <div class="option-card" onclick="selectProduct('pool')">
+    <div class="step-content active" id="step1">
+        <h1>What are we quoting?</h1>
+        <p class="subtitle">Select the product category</p>
+        <div class="grid-cards">
+            <div class="card" onclick="selectProduct('pool', this)">
                 <span class="icon">🏊</span>
-                <span class="label">Curved Pool Coping</span>
-                <span class="desc">Coping, Steps, Curved Edges</span>
+                <b>Pool Coping</b>
+                <span class="note">Curved, Steps, Linear Meters</span>
             </div>
-            <div class="option-card" onclick="selectProduct('custom')">
+            <div class="card" onclick="selectProduct('custom', this)">
                 <span class="icon">📐</span>
-                <span class="label">Custom Cut / Fab</span>
-                <span class="desc">Hearths, T-Shapes, Holes</span>
+                <b>Custom Cut</b>
+                <span class="note">Hearths, Benchtops, Shapes</span>
             </div>
-            <div class="option-card" onclick="selectProduct('artistic')">
+            <div class="card" onclick="selectProduct('artistic', this)">
                 <span class="icon">🎨</span>
-                <span class="label">Artistic / Signage</span>
-                <span class="desc">Inlays, Logos, Patterns</span>
+                <b>Artistic / Signage</b>
+                <span class="note">Inlay, Logos, Complex</span>
             </div>
         </div>
     </div>
 
-    <div class="step" id="step2">
-        <h1 id="detailTitle">Details</h1>
-        <p class="subtitle">Enter dimensions and finishes</p>
+    <div class="step-content" id="step2">
+        <h1 id="detailsTitle">Product Details</h1>
+        <p class="subtitle">Enter dimensions & finish requirements</p>
         
-        <div id="dynamicForm"></div> <div id="finishWarning" class="warning-box">
-            ⚠️ <strong>Client Notice:</strong> We can only produce Sawn or Honed edges. If the surface is Flamed/Sandblasted/Tumbled, the cut edge will <strong>NOT</strong> match the surface texture.
+        <div class="form-box" id="dynamicForm">
+            </div>
+        
+        <div class="alert alert-error" id="errorMsg"></div>
+        <div class="alert alert-warn" id="finishWarn">
+            ⚠️ <strong>Client Notice:</strong> We can only produce Sawn or Honed edges. If the stone surface is Flamed/Sandblasted, the edge texture will not match.
         </div>
 
         <div class="nav-btns">
-            <button class="btn btn-back" onclick="changeStep(-1)">Back</button>
-            <button class="btn btn-next" onclick="validateAndNext()">Next</button>
+            <button class="btn btn-back" onclick="goToStep(1)">Back</button>
+            <button class="btn btn-next" onclick="validateStep2()">Next</button>
         </div>
     </div>
 
-    <div class="step" id="step3">
-        <h1>Material Info</h1>
-        <p class="subtitle">Select stone density and thickness</p>
+    <div class="step-content" id="step3">
+        <h1>Material Selection</h1>
+        <p class="subtitle">Select Stone Type & Thickness</p>
         
-        <div class="input-group">
-            <label>Stone Hardness</label>
-            <select id="stoneHardness">
-                <option value="1.0">Soft (Limestone / Travertine)</option>
-                <option value="1.3">Hard (Granite / Basalt)</option>
-                <option value="1.6">Ultra (Quartzite / Porcelain)</option>
-            </select>
-
-            <label>Thickness</label>
-            <select id="stoneThickness">
-                <option value="1.0">20mm (Standard)</option>
-                <option value="1.5">30mm - 40mm</option>
-                <option value="2.0">50mm+</option>
-            </select>
+        <div class="form-box">
+            <div class="input-group">
+                <label>Stone Type (Hardness Coefficient)</label>
+                <select id="matTypeSelect">
+                    </select>
+            </div>
+            <div class="input-group">
+                <label>Material Thickness</label>
+                <select id="matThickSelect">
+                    </select>
+            </div>
         </div>
 
         <div class="nav-btns">
-            <button class="btn btn-back" onclick="changeStep(-1)">Back</button>
-            <button class="btn btn-next" onclick="calculateQuote()">Get Price</button>
+            <button class="btn btn-back" onclick="goToStep(2)">Back</button>
+            <button class="btn btn-next" onclick="calculateQuote()">Calculate Price</button>
         </div>
     </div>
 
-    <div class="step" id="step4">
-        <div class="result-box">
-            <h3>Estimated Price</h3>
-            <div class="price-tag" id="finalPrice">$0.00</div>
-            <p style="color: #6b7280; font-size: 0.8rem;">(Excludes GST & Delivery)</p>
+    <div class="step-content" id="step4">
+        <div class="result-card">
+            <span class="gst-tag">GST INCLUSIVE</span>
+            <h3>Estimated Total</h3>
+            <div class="price-large" id="finalPriceDisplay">$0.00</div>
             
-            <div class="breakdown" id="quoteBreakdown">
+            <div class="rate-breakdown" id="breakdownDisplay">
                 </div>
+
+            <button class="copy-btn" onclick="copyToClipboard()">
+                📄 Copy Quote for Email
+            </button>
         </div>
+
         <div class="nav-btns">
-            <button class="btn btn-back" onclick="changeStep(-1)">Edit</button>
-            <button class="btn btn-next" onclick="location.reload()">Start New</button>
+            <button class="btn btn-back" onclick="goToStep(3)">Edit Inputs</button>
+            <button class="btn btn-next" onclick="location.reload()">Start New Quote</button>
         </div>
     </div>
-</div>
+</main>
 
 <div class="modal-overlay" id="adminModal">
-    <div class="modal">
-        <h2>Settings</h2>
-        <div id="adminForm"></div>
-        <button class="btn btn-next" style="margin-top:1rem; margin-left:0;" onclick="saveConfig()">Save</button>
-        <button class="btn btn-back" style="margin-top:0.5rem;" onclick="toggleAdmin()">Cancel</button>
+    <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2 style="margin:0">⚙️ System Configuration</h2>
+            <button onclick="closeAdmin()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+        <p style="font-size:0.8rem; color:#666; margin-bottom:1rem;">All prices below should be entered as <strong>GST INCLUSIVE</strong>.</p>
+
+        <div id="adminContent">
+            </div>
+
+        <div class="nav-btns">
+            <button class="btn btn-back" onclick="closeAdmin()">Cancel</button>
+            <button class="btn btn-next" onclick="saveAdminConfig()">Save Changes</button>
+        </div>
     </div>
 </div>
 
+<div id="toast">Quote Copied to Clipboard!</div>
+
 <script>
-    // --- STATE & CONFIG ---
-    let currentStep = 1;
-    let selectedProduct = '';
-    
-    // Default Prices (Admin Editable)
-    let config = JSON.parse(localStorage.getItem('saiConfigV2')) || {
+    // --- 1. DATA STRUCTURE (DEFAULT CONFIG) ---
+    const defaultConfig = {
+        minCharge: 165, // $150 + GST
+        materials: [
+            { name: "Soft (Limestone/Travertine)", val: 1.0 },
+            { name: "Hard (Granite/Basalt)", val: 1.3 },
+            { name: "Ultra (Quartzite/Porcelain)", val: 1.6 }
+        ],
+        thicknesses: [
+            { name: "20mm Standard", val: 1.0 },
+            { name: "30mm - 40mm", val: 1.5 },
+            { name: "50mm+", val: 2.0 }
+        ],
         rates: {
-            linear: 45,      // Per meter (Base)
-            area: 300,       // Per sqm (Custom)
-            hole: 60,        // Per hole
-            artistic: 450    // Per sqm
+            pool_linear: 49.5,  // $45 + GST
+            custom_area: 330,   // $300 + GST
+            custom_hole: 66,    // $60 + GST
+            artistic_area: 495  // $450 + GST
         },
         fees: {
-            templating: 550,
-            honed: 20,       // Per meter extra for honed edge
-            bullnose: 45,    // Per meter extra
-            pencil: 15       // Per meter extra
+            template: 605,      // $550 + GST
+            honed: 27.5,        // $25 + GST
+            bullnose: 49.5,     // $45 + GST
+            pencil: 16.5        // $15 + GST
         }
     };
 
-    // --- NAVIGATION ---
-    function changeStep(dir) {
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-        currentStep += dir;
-        document.getElementById(`step${currentStep}`).classList.add('active');
-        document.getElementById('progressBar').style.width = `${currentStep * 25}%`;
+    // Load from LocalStorage or use Default
+    let config = JSON.parse(localStorage.getItem('saiStoneConfigV3')) || defaultConfig;
+    
+    let state = {
+        product: '',
+        details: {},
+        material: {},
+        thickness: {}
+    };
+
+    // --- 2. INITIALIZATION ---
+    function init() {
+        populateDropdowns();
     }
 
-    // --- STEP 1: SELECTION ---
-    function selectProduct(type) {
-        selectedProduct = type;
+    function populateDropdowns() {
+        // Material Dropdown
+        const matSel = document.getElementById('matTypeSelect');
+        matSel.innerHTML = config.materials.map((m, i) => `<option value="${i}">${m.name} (x${m.val})</option>`).join('');
+
+        // Thickness Dropdown
+        const thkSel = document.getElementById('matThickSelect');
+        thkSel.innerHTML = config.thicknesses.map((t, i) => `<option value="${i}">${t.name} (x${t.val})</option>`).join('');
+    }
+
+    // --- 3. NAVIGATION LOGIC ---
+    function goToStep(n) {
+        document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step${n}`).classList.add('active');
+        
+        // Update Progress Bubbles
+        for(let i=1; i<=4; i++) {
+            const bubble = document.getElementById(`p${i}`);
+            bubble.classList.remove('active', 'completed');
+            if(i === n) bubble.classList.add('active');
+            if(i < n) bubble.classList.add('completed');
+        }
+
+        // Hide errors
+        document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function selectProduct(type, el) {
+        state.product = type;
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        
         renderDetailsForm(type);
-        changeStep(1);
+        setTimeout(() => goToStep(2), 200);
     }
 
-    // --- STEP 2: DYNAMIC FORM RENDERER ---
+    // --- 4. FORM RENDERING ---
     function renderDetailsForm(type) {
-        const container = document.getElementById('dynamicForm');
+        const form = document.getElementById('dynamicForm');
         let html = '';
-        const warning = document.getElementById('finishWarning');
-        warning.style.display = 'none';
 
-        if (type === 'pool') {
-            document.getElementById('detailTitle').innerText = "Pool Coping Details";
+        if(type === 'pool') {
+            document.getElementById('detailsTitle').innerText = 'Pool Coping Details';
             html = `
                 <div class="input-group">
-                    <label>Total Length of Curves (Meters)</label>
-                    <input type="number" id="inputLength" placeholder="e.g. 15.5">
-                    
+                    <label>Total Length (Linear Meters)</label>
+                    <input type="number" id="inp_len" placeholder="e.g. 15.5" step="0.1">
+                </div>
+                <div class="input-group">
                     <label>Edge Profile</label>
-                    <select id="edgeProfile" onchange="checkProfile(this)">
-                        <option value="none">Straight / Sawn (No Profile)</option>
-                        <option value="pencil">Pencil Round / Bevel</option>
-                        <option value="bullnose">Bullnose</option>
+                    <select id="inp_profile" onchange="checkDropface(this)">
+                        <option value="none">Sawn / Straight Cut</option>
+                        <option value="pencil">Pencil Round (+$${config.fees.pencil})</option>
+                        <option value="bullnose">Bullnose (+$${config.fees.bullnose})</option>
                         <option value="dropface">Dropface (L-Shape)</option>
                     </select>
-                    <div id="dropfaceError" class="error-box">⛔ We CANNOT achieve Dropface locally.</div>
-
-                    <label>Edge Finish</label>
-                    <select id="edgeFinish" onchange="checkFinish(this)">
-                        <option value="sawn">Sawn (Standard - Machine Cut)</option>
-                        <option value="honed">Honed (Smoothed/Polished)</option>
-                    </select>
                 </div>
-                
                 <div class="input-group">
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" id="checkTemplate" style="width:20px; margin:0 10px 0 0;">
-                        Need Site Templating? (+$${config.fees.templating})
+                    <label style="font-weight:normal; display:flex; align-items:center; gap:10px; cursor:pointer;">
+                        <input type="checkbox" id="inp_template" style="width:20px;"> 
+                        <strong>Include Templating Service? (+$${config.fees.template})</strong>
                     </label>
                 </div>
             `;
         } else if (type === 'custom') {
-            document.getElementById('detailTitle').innerText = "Custom Cut Details";
+            document.getElementById('detailsTitle').innerText = 'Custom Fabrication';
             html = `
                 <div class="input-group">
-                    <label>Overall Length (mm)</label>
-                    <input type="number" id="inputL" placeholder="e.g. 1200">
-                    <label>Overall Width (mm)</label>
-                    <input type="number" id="inputW" placeholder="e.g. 600">
-                    
+                    <label>Dimensions (mm)</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="inp_l" placeholder="Length">
+                        <input type="number" id="inp_w" placeholder="Width">
+                    </div>
+                </div>
+                <div class="input-group">
                     <label>Internal Cut-outs (Holes/Sinks)</label>
-                    <input type="number" id="inputHoles" placeholder="Number of holes" value="0">
-
-                    <label>Edge Finish</label>
-                    <select id="edgeFinish" onchange="checkFinish(this)">
-                        <option value="sawn">Sawn (Standard)</option>
-                        <option value="honed">Honed (Smoothed)</option>
-                    </select>
+                    <input type="number" id="inp_holes" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Polished Edge Length (mm)</label>
+                    <input type="number" id="inp_polish" value="0" placeholder="Total length to hone">
+                    <span class="note">Leave 0 if no visible edges need polishing.</span>
                 </div>
             `;
-        } else if (type === 'artistic') {
-            document.getElementById('detailTitle').innerText = "Artistic Details";
+        } else {
+            document.getElementById('detailsTitle').innerText = 'Artistic / Signage';
             html = `
                 <div class="input-group">
                     <label>Total Area (m²)</label>
-                    <input type="number" id="inputArea" placeholder="e.g. 2.5">
-                    
-                    <label>Type</label>
-                    <select id="artType">
-                        <option value="cut_through">Cut Through (Holes)</option>
-                        <option value="inlay">Inlay (Filled with stone)</option>
-                    </select>
-
-                    <label>Complexity</label>
-                    <select id="artComplex">
+                    <input type="number" id="inp_area" placeholder="e.g. 1.2">
+                </div>
+                <div class="input-group">
+                    <label>Complexity Level</label>
+                    <select id="inp_complex">
                         <option value="1">Basic (Geometric)</option>
-                        <option value="1.5">Medium (Text)</option>
-                        <option value="2.5">High (Complex Logo)</option>
+                        <option value="1.5">Medium (Text/Floral)</option>
+                        <option value="2.5">High (Complex Logos)</option>
                     </select>
                 </div>
             `;
         }
-        container.innerHTML = html;
+        form.innerHTML = html;
     }
 
-    // --- FORM VALIDATION & LOGIC TRIGGERS ---
-    window.checkProfile = function(el) {
-        const err = document.getElementById('dropfaceError');
-        const btn = document.querySelector('#step2 .btn-next');
-        if (el.value === 'dropface') {
-            err.style.display = 'block';
-            btn.disabled = true;
+    // --- 5. VALIDATION ---
+    function checkDropface(el) {
+        const err = document.getElementById('errorMsg');
+        if(el.value === 'dropface') {
+            err.innerText = "⛔ ERROR: Dropface cannot be produced locally. Please select Mitred Apron or Bullnose.";
+            err.style.display = 'flex';
+            document.querySelector('#step2 .btn-next').disabled = true;
         } else {
             err.style.display = 'none';
-            btn.disabled = false;
+            document.querySelector('#step2 .btn-next').disabled = false;
         }
-    };
-
-    window.checkFinish = function(el) {
-        const warn = document.getElementById('finishWarning');
-        // Always show warning if user interacts, or show specifically for Honed. 
-        // For now, let's show it always as a reminder of the limitation.
-        warn.style.display = 'block';
-    };
-
-    window.validateAndNext = function() {
-        // Basic check if inputs are empty
-        const inputs = document.querySelectorAll('#step2 input[type="number"]');
-        for (let i of inputs) {
-            if (i.value === '' || i.value < 0) { alert("Please check dimensions."); return; }
-        }
-        changeStep(1);
     }
 
-    // --- CALCULATION ENGINE ---
-    window.calculateQuote = function() {
-        const hardness = parseFloat(document.getElementById('stoneHardness').value);
-        const thickness = parseFloat(document.getElementById('stoneThickness').value);
-        const multiplier = hardness * thickness;
+    function validateStep2() {
+        let valid = true;
+        const err = document.getElementById('errorMsg');
 
-        let baseCost = 0;
-        let extras = 0;
-        let breakdownHTML = '';
-
-        if (selectedProduct === 'pool') {
-            const meters = parseFloat(document.getElementById('inputLength').value);
-            const profile = document.getElementById('edgeProfile').value;
-            const finish = document.getElementById('edgeFinish').value;
-            const needsTemplate = document.getElementById('checkTemplate').checked;
-
-            // Base cutting rate
-            let rate = config.rates.linear; 
-            
-            // Add Profile Cost
-            if (profile === 'bullnose') rate += config.fees.bullnose;
-            if (profile === 'pencil') rate += config.fees.pencil;
-            
-            // Add Finish Cost
-            if (finish === 'honed') rate += config.fees.honed;
-
-            baseCost = (meters * rate) * multiplier;
-            
-            if (needsTemplate) extras += config.fees.templating;
-
-            breakdownHTML = `
-                <div class="line-item"><span>Linear Meters:</span> <span>${meters}m</span></div>
-                <div class="line-item"><span>Processing Rate:</span> <span>$${rate}/m</span></div>
-                <div class="line-item"><span>Material Multiplier:</span> <span>x${multiplier.toFixed(2)}</span></div>
-                ${needsTemplate ? `<div class="line-item"><span>Templating Service:</span> <span>$${config.fees.templating}</span></div>` : ''}
-            `;
-
-        } else if (selectedProduct === 'custom') {
-            const l = parseFloat(document.getElementById('inputL').value) / 1000; // to m
-            const w = parseFloat(document.getElementById('inputW').value) / 1000; // to m
-            const holes = parseFloat(document.getElementById('inputHoles').value);
-            const finish = document.getElementById('edgeFinish').value;
-            
-            const area = l * w;
-            let cutCost = area * config.rates.area;
-            let holeCost = holes * config.rates.hole;
-
-            // Add finish cost (perimeter estimate: (L+W)*2 )
-            if (finish === 'honed') {
-                extras += ((l + w) * 2) * config.fees.honed;
-            }
-
-            baseCost = (cutCost + holeCost) * multiplier;
-
-            breakdownHTML = `
-                <div class="line-item"><span>Area:</span> <span>${area.toFixed(2)}m²</span></div>
-                <div class="line-item"><span>Holes:</span> <span>${holes} ($${config.rates.hole}/ea)</span></div>
-                <div class="line-item"><span>Material Multiplier:</span> <span>x${multiplier.toFixed(2)}</span></div>
-                ${extras > 0 ? `<div class="line-item"><span>Honing (Est. Perimeter):</span> <span>$${extras.toFixed(2)}</span></div>` : ''}
-            `;
-
-        } else if (selectedProduct === 'artistic') {
-            const area = parseFloat(document.getElementById('inputArea').value);
-            const complex = parseFloat(document.getElementById('artComplex').value);
-            
-            baseCost = (area * config.rates.artistic * complex) * multiplier;
-
-            breakdownHTML = `
-                <div class="line-item"><span>Area:</span> <span>${area}m²</span></div>
-                <div class="line-item"><span>Complexity:</span> <span>Tier x${complex}</span></div>
-                <div class="line-item"><span>Material Multiplier:</span> <span>x${multiplier.toFixed(2)}</span></div>
-            `;
-        }
-
-        const total = baseCost + extras;
-
-        document.getElementById('finalPrice').innerText = '$' + total.toFixed(2);
-        document.getElementById('quoteBreakdown').innerHTML = breakdownHTML + 
-            `<div class="line-item bold"><span>Total Estimate:</span> <span>$${total.toFixed(2)}</span></div>`;
-            
-        changeStep(1);
-    }
-
-    // --- ADMIN ---
-    window.toggleAdmin = function() {
-        const modal = document.getElementById('adminModal');
-        const form = document.getElementById('adminForm');
-        
-        if (modal.style.display !== 'flex') {
-            form.innerHTML = `
-                <label>Linear Rate ($/m)</label><input id="cfg_linear" type="number" value="${config.rates.linear}">
-                <label>Templating Fee ($)</label><input id="cfg_templ" type="number" value="${config.fees.templating}">
-                <label>Bullnose Extra ($/m)</label><input id="cfg_bull" type="number" value="${config.fees.bullnose}">
-            `;
-            modal.classList.add('open');
+        if(state.product === 'pool') {
+            const val = document.getElementById('inp_len').value;
+            if(!val || val <= 0) valid = false;
+            if(val > 200) { if(!confirm("You entered > 200 Meters. Is this correct?")) valid = false; }
+        } else if (state.product === 'custom') {
+            if(!document.getElementById('inp_l').value || !document.getElementById('inp_w').value) valid = false;
         } else {
-            modal.classList.remove('open');
+            if(!document.getElementById('inp_area').value) valid = false;
+        }
+
+        if(!valid) {
+            err.innerText = "Please check your inputs. Fields cannot be empty or zero.";
+            err.style.display = 'flex';
+        } else {
+            goToStep(3);
         }
     }
 
-    window.saveConfig = function() {
-        config.rates.linear = parseFloat(document.getElementById('cfg_linear').value);
-        config.fees.templating = parseFloat(document.getElementById('cfg_templ').value);
-        config.fees.bullnose = parseFloat(document.getElementById('cfg_bull').value);
-        localStorage.setItem('saiConfigV2', JSON.stringify(config));
-        document.getElementById('adminModal').classList.remove('open');
+    // --- 6. CALCULATION ENGINE ---
+    function calculateQuote() {
+        // Get Material Data
+        const matIdx = document.getElementById('matTypeSelect').value;
+        const thkIdx = document.getElementById('matThickSelect').value;
+        const material = config.materials[matIdx];
+        const thickness = config.thicknesses[thkIdx];
+        
+        state.material = material;
+        state.thickness = thickness;
+        
+        const multiplier = material.val * thickness.val;
+        
+        let total = 0;
+        let breakdownHTML = '';
+        let clipboardText = '';
+
+        if(state.product === 'pool') {
+            const len = parseFloat(document.getElementById('inp_len').value);
+            const profile = document.getElementById('inp_profile').value;
+            const hasTemplate = document.getElementById('inp_template').checked;
+
+            // 1. Calculate Unit Rate (Per Meter)
+            let baseRate = config.rates.pool_linear;
+            let extras = 0;
+            if(profile === 'bullnose') extras = config.fees.bullnose;
+            if(profile === 'pencil') extras = config.fees.pencil;
+            if(profile === 'none') extras = 0;
+
+            // Unit Rate = (Cutting + Profile) * Material Multiplier
+            // Note: Material multiplier usually applies to the cutting/processing, not necessarily fixed fees, 
+            // but standard logic is (Base + Extra) * Multiplier.
+            let unitRate = (baseRate + extras) * multiplier;
+            
+            // 2. Calculate Total
+            let subtotal = unitRate * len;
+            let templateFee = hasTemplate ? config.fees.template : 0;
+            
+            total = subtotal + templateFee;
+
+            // 3. Render Output
+            breakdownHTML = `
+                <div class="rate-row"><span>Cutting Length:</span> <span>${len} lm</span></div>
+                <div class="rate-row"><span>Profile:</span> <span>${profile.toUpperCase()}</span></div>
+                <div class="rate-row"><span>Material Factor:</span> <span>${material.name} x ${thickness.name}</span></div>
+                <div class="rate-row highlight"><span>UNIT RATE:</span> <span>$${unitRate.toFixed(2)} / lm (Inc GST)</span></div>
+                ${hasTemplate ? `<div class="rate-row"><span>+ Templating Fee:</span> <span>$${templateFee.toFixed(2)}</span></div>` : ''}
+            `;
+            
+            clipboardText = `QUOTE SUMMARY (GST INC)\nType: Pool Coping\nLength: ${len}lm\nProfile: ${profile}\nMaterial: ${material.name} / ${thickness.name}\n\nUNIT RATE: $${unitRate.toFixed(2)} / lm\n${hasTemplate ? `Templating: $${templateFee}\n` : ''}----------------\nTOTAL: $${total.toFixed(2)}`;
+
+        } else if (state.product === 'custom') {
+            const l = parseFloat(document.getElementById('inp_l').value) / 1000;
+            const w = parseFloat(document.getElementById('inp_w').value) / 1000;
+            const holes = parseFloat(document.getElementById('inp_holes').value) || 0;
+            const polishLen = parseFloat(document.getElementById('inp_polish').value) / 1000;
+            const area = l * w;
+
+            let cutCost = area * config.rates.custom_area;
+            let holeCost = holes * config.rates.custom_hole;
+            
+            // Material Multiplier applies to Cutting + Holes
+            let processingTotal = (cutCost + holeCost) * multiplier;
+            
+            // Polishing is usually fixed rate per meter, maybe affected by hardness? 
+            // Let's assume polishing rate is fixed per meter (or multiplied by hardness only, not thickness). 
+            // For simplicity based on prompt: (Rate) * Multiplier.
+            let polishCost = (polishLen * config.fees.honed) * multiplier; // Assuming hardness affects polishing speed
+
+            total = processingTotal + polishCost;
+
+            breakdownHTML = `
+                <div class="rate-row"><span>Dimensions:</span> <span>${(l*1000).toFixed(0)}x${(w*1000).toFixed(0)}mm</span></div>
+                <div class="rate-row"><span>Area:</span> <span>${area.toFixed(2)} m²</span></div>
+                <div class="rate-row"><span>Holes:</span> <span>${holes}</span></div>
+                <div class="rate-row"><span>Polishing:</span> <span>${polishLen.toFixed(2)} lm</span></div>
+                <div class="rate-row"><span>Material Factor:</span> <span>x${multiplier.toFixed(2)}</span></div>
+            `;
+             clipboardText = `QUOTE SUMMARY (GST INC)\nType: Custom Fabrication\nSize: ${l*1000}x${w*1000}mm\nHoles: ${holes}\nPolished Edge: ${polishLen}m\nMaterial: ${material.name} / ${thickness.name}\n----------------\nTOTAL: $${total.toFixed(2)}`;
+
+        } else {
+            const area = parseFloat(document.getElementById('inp_area').value);
+            const complex = parseFloat(document.getElementById('inp_complex').value);
+            
+            total = (area * config.rates.artistic_area * complex) * multiplier;
+
+            breakdownHTML = `
+                <div class="rate-row"><span>Area:</span> <span>${area} m²</span></div>
+                <div class="rate-row"><span>Complexity:</span> <span>Tier x${complex}</span></div>
+                <div class="rate-row"><span>Material Factor:</span> <span>x${multiplier.toFixed(2)}</span></div>
+            `;
+            clipboardText = `QUOTE SUMMARY (GST INC)\nType: Artistic/Signage\nArea: ${area}m2\nComplexity: x${complex}\nMaterial: ${material.name}\n----------------\nTOTAL: $${total.toFixed(2)}`;
+        }
+
+        // Min Charge Check
+        let minMsg = "";
+        if(total < config.minCharge) {
+            total = config.minCharge;
+            minMsg = `<div style="color:red; font-size:0.8rem; margin-top:5px;">(Minimum Charge Applied)</div>`;
+            breakdownHTML += minMsg;
+            clipboardText += `\n(Minimum Charge Applied)`;
+        }
+
+        document.getElementById('finalPriceDisplay').innerText = '$' + total.toFixed(2);
+        document.getElementById('breakdownDisplay').innerHTML = breakdownHTML;
+        
+        // Save clipboard text for button
+        document.querySelector('.copy-btn').setAttribute('data-text', clipboardText);
+        
+        goToStep(4);
     }
+
+    function copyToClipboard() {
+        const text = document.querySelector('.copy-btn').getAttribute('data-text');
+        navigator.clipboard.writeText(text).then(() => {
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        });
+    }
+
+    // --- 7. ADMIN SYSTEM (HIERARCHICAL) ---
+    function openAdmin() {
+        const c = config;
+        const html = `
+            <details>
+                <summary>🧱 Materials List (Name & Coeff)</summary>
+                <div class="admin-section" id="adm_mat_list">
+                    ${c.materials.map((m, i) => `
+                        <div class="admin-row">
+                            <input type="text" class="name-input" value="${m.name}" onchange="updateArr('materials',${i},'name',this.value)">
+                            <input type="number" class="val-input" value="${m.val}" step="0.1" onchange="updateArr('materials',${i},'val',this.value)">
+                            <button class="del-btn" onclick="delItem('materials',${i})">&times;</button>
+                        </div>
+                    `).join('')}
+                    <button class="add-btn" onclick="addItem('materials')">+ Add New Material</button>
+                </div>
+            </details>
+
+            <details>
+                <summary>📏 Thickness List (Name & Coeff)</summary>
+                <div class="admin-section" id="adm_thk_list">
+                    ${c.thicknesses.map((t, i) => `
+                        <div class="admin-row">
+                            <input type="text" class="name-input" value="${t.name}" onchange="updateArr('thicknesses',${i},'name',this.value)">
+                            <input type="number" class="val-input" value="${t.val}" step="0.1" onchange="updateArr('thicknesses',${i},'val',this.value)">
+                            <button class="del-btn" onclick="delItem('thicknesses',${i})">&times;</button>
+                        </div>
+                    `).join('')}
+                    <button class="add-btn" onclick="addItem('thicknesses')">+ Add New Thickness</button>
+                </div>
+            </details>
+
+            <details open>
+                <summary>💲 Base Rates (GST Inc)</summary>
+                <div class="admin-section">
+                    <div class="admin-row"><label>Min Charge ($)</label> <input type="number" id="adm_min" value="${c.minCharge}"></div>
+                    <div class="admin-row"><label>Pool Linear ($/m)</label> <input type="number" id="adm_pool_lin" value="${c.rates.pool_linear}"></div>
+                    <div class="admin-row"><label>Custom Area ($/m2)</label> <input type="number" id="adm_cust_area" value="${c.rates.custom_area}"></div>
+                    <div class="admin-row"><label>Custom Hole ($/ea)</label> <input type="number" id="adm_cust_hole" value="${c.rates.custom_hole}"></div>
+                    <div class="admin-row"><label>Artistic ($/m2)</label> <input type="number" id="adm_art" value="${c.rates.artistic_area}"></div>
+                </div>
+            </details>
+
+            <details>
+                <summary>🛠️ Service Fees (GST Inc)</summary>
+                <div class="admin-section">
+                    <div class="admin-row"><label>Templating ($)</label> <input type="number" id="adm_templ" value="${c.fees.template}"></div>
+                    <div class="admin-row"><label>Bullnose ($/m)</label> <input type="number" id="adm_bull" value="${c.fees.bullnose}"></div>
+                    <div class="admin-row"><label>Pencil ($/m)</label> <input type="number" id="adm_pencil" value="${c.fees.pencil}"></div>
+                    <div class="admin-row"><label>Honing ($/m)</label> <input type="number" id="adm_hone" value="${c.fees.honed}"></div>
+                </div>
+            </details>
+        `;
+        document.getElementById('adminContent').innerHTML = html;
+        document.getElementById('adminModal').style.display = 'flex';
+    }
+
+    function closeAdmin() {
+        document.getElementById('adminModal').style.display = 'none';
+    }
+
+    // Helper to update arrays in config directly from inputs
+    window.updateArr = (arrName, index, key, val) => {
+        if(key === 'val') val = parseFloat(val);
+        config[arrName][index][key] = val;
+    }
+    
+    window.delItem = (arrName, index) => {
+        if(confirm("Delete this item?")) {
+            config[arrName].splice(index, 1);
+            openAdmin(); // Re-render
+        }
+    }
+
+    window.addItem = (arrName) => {
+        const newItem = { name: "New Item", val: 1.0 };
+        config[arrName].push(newItem);
+        openAdmin(); // Re-render
+    }
+
+    function saveAdminConfig() {
+        // Save simple inputs
+        config.minCharge = parseFloat(document.getElementById('adm_min').value);
+        config.rates.pool_linear = parseFloat(document.getElementById('adm_pool_lin').value);
+        config.rates.custom_area = parseFloat(document.getElementById('adm_cust_area').value);
+        config.rates.custom_hole = parseFloat(document.getElementById('adm_cust_hole').value);
+        config.rates.artistic_area = parseFloat(document.getElementById('adm_art').value);
+        
+        config.fees.template = parseFloat(document.getElementById('adm_templ').value);
+        config.fees.bullnose = parseFloat(document.getElementById('adm_bull').value);
+        config.fees.pencil = parseFloat(document.getElementById('adm_pencil').value);
+        config.fees.honed = parseFloat(document.getElementById('adm_hone').value);
+
+        // Save to LocalStorage
+        localStorage.setItem('saiStoneConfigV3', JSON.stringify(config));
+        
+        // Refresh UI
+        init();
+        closeAdmin();
+        alert("Configuration Saved!");
+    }
+
+    // Initialize on load
+    init();
 
 </script>
 </body>
